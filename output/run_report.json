@@ -1,0 +1,257 @@
+{
+ "date": "2026-10-26",
+ "status": "OK",
+ "problems": [],
+ "warnings": [],
+ "stats": {
+  "roster_faculty": 174,
+  "faculty_with_publications": 127,
+  "citytech_works": 3130,
+  "ai_publications": 262,
+  "people": 69
+ },
+ "tiers": {
+  "Core AI expert": 9,
+  "Active in AI": 14,
+  "Some AI work": 41,
+  "Needs review": 5
+ },
+ "records_by_source": {
+  "OpenAlex": 6848,
+  "CUNY Academic Works": 482
+ },
+ "new_people": [
+  [
+   "Alberto Martinez",
+   "Active in AI",
+   true
+  ],
+  [
+   "Johnny Guevara",
+   "Active in AI",
+   false
+  ],
+  [
+   "Mery F. Diaz",
+   "Active in AI",
+   false
+  ],
+  [
+   "German Kolmakov",
+   "Some AI work",
+   true
+  ],
+  [
+   "Christopher Blair",
+   "Some AI work",
+   true
+  ],
+  [
+   "Abdou Rachid Bah",
+   "Some AI work",
+   false
+  ],
+  [
+   "Akm Samsur Rahman",
+   "Some AI work",
+   false
+  ],
+  [
+   "Benito Mendoza",
+   "Some AI work",
+   false
+  ],
+  [
+   "Carlos J. Pav\u00f3n\u2010V\u00e1zquez",
+   "Some AI work",
+   false
+  ],
+  [
+   "Eun Jeong Lee",
+   "Some AI work",
+   false
+  ],
+  [
+   "Farrukh Zia",
+   "Some AI work",
+   false
+  ],
+  [
+   "Jihun Kim",
+   "Some AI work",
+   false
+  ],
+  [
+   "Mercer R. Brugler",
+   "Some AI work",
+   false
+  ],
+  [
+   "Nandi Prince",
+   "Some AI work",
+   false
+  ],
+  [
+   "Shaojin Zhang",
+   "Some AI work",
+   false
+  ],
+  [
+   "Xu Chen",
+   "Some AI work",
+   false
+  ],
+  [
+   "Daniel Ryan",
+   "Some AI work",
+   true
+  ],
+  [
+   "Jason Ellis",
+   "Some AI work",
+   true
+  ],
+  [
+   "Unurjargal Nyambuu",
+   "Some AI work",
+   true
+  ],
+  [
+   "Shanghuan Chiu",
+   "Needs review",
+   true
+  ],
+  [
+   "Zheng Zhu",
+   "Needs review",
+   true
+  ]
+ ],
+ "removed_people": [
+  [
+   "Mery Diaz",
+   "Active in AI"
+  ],
+  [
+   "Caleb Beckwith",
+   "Some AI work"
+  ],
+  [
+   "Delaram Kahrobaei",
+   "Some AI work"
+  ],
+  [
+   "Honamattie R. Dabydeen",
+   "Needs review"
+  ]
+ ],
+ "tier_changes": [
+  [
+   "Li Geng",
+   "Active in AI",
+   "Core AI expert"
+  ],
+  [
+   "Andy Zhang",
+   "Some AI work",
+   "Active in AI"
+  ],
+  [
+   "Mai Zahran",
+   "Some AI work",
+   "Active in AI"
+  ],
+  [
+   "H. Norouzi",
+   "Some AI work",
+   "Active in AI"
+  ],
+  [
+   "Reginald Blake",
+   "Some AI work",
+   "Active in AI"
+  ],
+  [
+   "Nan Li",
+   "Needs review",
+   "Some AI work"
+  ],
+  [
+   "Satyanand Singh",
+   "Needs review",
+   "Some AI work"
+  ]
+ ],
+ "needs_review": [
+  "Lin Zhou",
+  "George Guida",
+  "Shanghuan Chiu",
+  "David Sanchez Jimenez",
+  "Zheng Zhu"
+ ],
+ "new_not_on_roster": [
+  "Johnny Guevara",
+  "Mery F. Diaz",
+  "Abdou Rachid Bah",
+  "Akm Samsur Rahman",
+  "Benito Mendoza",
+  "Carlos J. Pav\u00f3n\u2010V\u00e1zquez",
+  "Eun Jeong Lee",
+  "Farrukh Zia",
+  "Jihun Kim",
+  "Mercer R. Brugler",
+  "Nandi Prince",
+  "Shaojin Zhang",
+  "Xu Chen"
+ ],
+ "roster_without_publications": [
+  "Abiola Olatunde",
+  "Agnes Zana",
+  "Alba Rossi-George",
+  "Andleeb Zameer",
+  "Andrew Vaughn",
+  "Ann Delilkan",
+  "Beverly Lapuma",
+  "Bruce Kan",
+  "Carrie Hall",
+  "Debarati Biswas",
+  "Dionne Bennett",
+  "Dominick Desantis",
+  "Dua Ahmed",
+  "Duval Bodden Jr.",
+  "Emilio Minichiello Epstein",
+  "Erez Shochat",
+  "Ezra Halleck",
+  "F. Patricia Medina",
+  "Grazyna Niezgoda",
+  "Gulgun Bayaz",
+  "Honamattie R. Dabydeen",
+  "Hyunjoo Do",
+  "Jaclyn P. Griffith",
+  "Jeffrey Kroll",
+  "Joel Greenstein",
+  "John Lonie",
+  "Julian Williams",
+  "Kate Falvey",
+  "Kayla Davie",
+  "Khalid Lachheb",
+  "Leigh Gold",
+  "Maria Pagano",
+  "Marie Parnes",
+  "Michael McAuliffe",
+  "Monique Ferrell",
+  "Reneta D. Lansiquot-Panagiotakis",
+  "Robert Macdougall",
+  "Roriann Smith",
+  "Samar El Hitti",
+  "Scott D. Dahlie",
+  "Steven Bear",
+  "Suela Aalsberg",
+  "Suresh Tewani",
+  "Vitaliy Dorogan",
+  "William Colucci",
+  "Yousoon Baek",
+  "Zhijian Qian"
+ ],
+ "attention": true
+}
