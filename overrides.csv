@@ -1,0 +1,8 @@
+action,person,paper,value,reviewed_by,date,note
+# Review decisions. Each row survives every monthly rebuild. Lines starting with # are ignored.,,,,
+# Actions: not_ai | is_ai | not_theirs | confirm_theirs | department | hide. See MAINTAINING.md.,,,,
+# paper = an OpenAlex work ID (W1234...) or a DOI or the exact title. *unverified* = all unverified papers.,,,,
+# Examples (remove the # to use):,,,,
+# not_theirs,Lin Zhou,*unverified*,,your name,2026-10-21,Profile merges other researchers named Lin Zhou
+# department,Fangyang Shen,,Computer Systems Technology,your name,2026-10-21,Confirmed on CST directory
+# hide,Some Student,,student co-author,your name,2026-10-21

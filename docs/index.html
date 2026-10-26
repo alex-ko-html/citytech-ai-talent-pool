@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<title>City Tech AI Talent Pool</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a working directory. Masthead → filter rail → ranked roster of people; a detail sheet
+   slides over with the evidence (every claim links to the paper it came from). */
+:root{
+  --bg:#f3f5f8; --panel:#ffffff; --ink:#14213a; --ink-2:#4a5672; --ink-3:#7c869c;
+  --line:#dde2ea; --line-2:#c9d0dc; --accent:#1f4fd1; --accent-ink:#ffffff; --accent-soft:#e4ebfc;
+  --core:#0f6b5c; --core-soft:#dcf0ea; --active:#3b48b8; --active-soft:#e3e6fa;
+  --some:#5b6478; --some-soft:#eceef3; --review:#9a5b00; --review-soft:#fbefd9;
+  --shadow:0 1px 2px rgba(20,33,58,.06),0 8px 24px rgba(20,33,58,.06);
+  --f-display:"Schibsted Grotesk","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1522; --panel:#161e2f; --ink:#e7ecf5; --ink-2:#aeb8cc; --ink-3:#7f8aa1;
+  --line:#253049; --line-2:#33405e; --accent:#7ea2ff; --accent-ink:#0b1220; --accent-soft:#1d2a4d;
+  --core:#5fd0b6; --core-soft:#12332d; --active:#9aa5ff; --active-soft:#1f2550;
+  --some:#a7b0c3; --some-soft:#222b3e; --review:#f0b45a; --review-soft:#3a2a12;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1522; --panel:#161e2f; --ink:#e7ecf5; --ink-2:#aeb8cc; --ink-3:#7f8aa1;
+  --line:#253049; --line-2:#33405e; --accent:#7ea2ff; --accent-ink:#0b1220; --accent-soft:#1d2a4d;
+  --core:#5fd0b6; --core-soft:#12332d; --active:#9aa5ff; --active-soft:#1f2550;
+  --some:#a7b0c3; --some-soft:#222b3e; --review:#f0b45a; --review-soft:#3a2a12;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35); color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--ink);font:15px/1.5 var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* masthead */
+header.mast{border-bottom:1px solid var(--line);background:var(--panel)}
+header.mast .wrap{padding-block:28px 22px;display:grid;gap:18px}
+.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+h1{font:800 clamp(28px,4.4vw,44px)/1.04 var(--f-display);letter-spacing:-.02em;margin:6px 0 0;text-wrap:balance}
+.lede{color:var(--ink-2);max-width:68ch;margin:0}
+.facts{display:flex;flex-wrap:wrap;gap:8px 22px;font:13px/1.4 var(--f-mono);color:var(--ink-2)}
+.facts b{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
+
+/* tier strip */
+.tiers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:720px){.tiers{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tier-btn{all:unset;cursor:pointer;display:grid;gap:4px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);position:relative}
+.tier-btn:hover{border-color:var(--line-2)}
+.tier-btn[aria-pressed="true"]{border-color:var(--t);background:var(--ts);box-shadow:inset 0 0 0 1px var(--t)}
+.tier-btn .n{font:700 26px/1 var(--f-display);color:var(--t);font-variant-numeric:tabular-nums}
+.tier-btn .l{font-weight:600;font-size:13.5px}
+.tier-btn .d{font-size:12px;color:var(--ink-3);line-height:1.35}
+.tier-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* controls */
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.controls .wrap{padding-block:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.search{flex:1 1 260px;min-width:0;position:relative}
+.search input{width:100%;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line-2);border-radius:8px;padding:9px 12px 9px 34px}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--ink-3)}
+select{font:inherit;font-size:14px;color:var(--ink);background:var(--panel);border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;max-width:100%}
+.toggle{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink-2);cursor:pointer;user-select:none}
+.toggle input{accent-color:var(--accent);width:16px;height:16px}
+.reset{all:unset;cursor:pointer;font-size:13px;color:var(--accent);padding:6px 4px}
+.reset:focus-visible{outline:2px solid var(--accent)}
+@media (max-width:720px){.controls{position:static;backdrop-filter:none}.controls select{flex:1 1 40%}}
+
+/* list */
+main .wrap{padding-block:18px 60px;display:grid;gap:14px}
+.count{font:13px var(--f-mono);color:var(--ink-3)}
+.list{display:grid;gap:8px}
+.row{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:minmax(0,2.1fr) minmax(0,1.5fr) 150px 96px;gap:16px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;transition:border-color .15s,transform .15s}
+.row:hover{border-color:var(--line-2);transform:translateY(-1px)}
+.row:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.who{min-width:0;display:grid;gap:3px}
+.who .nm{font:700 16.5px/1.2 var(--f-display);letter-spacing:-.005em}
+.who .meta{font-size:13px;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who .meta .off{color:var(--review)}
+.areas{display:flex;flex-wrap:wrap;gap:5px;min-width:0}
+.chip{font-size:12px;line-height:1;padding:5px 8px;border-radius:999px;background:var(--some-soft);color:var(--ink-2);white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--f-body);padding:6px 9px;border-radius:6px;background:var(--ts);color:var(--t);white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--t)}
+.nums{display:grid;justify-items:end;gap:2px;font-variant-numeric:tabular-nums}
+.nums .big{font:700 22px/1 var(--f-display)}
+.nums .sm{font:11.5px/1.2 var(--f-mono);color:var(--ink-3);text-align:right}
+.spark{display:block;width:150px;height:30px}
+.tierwrap{display:grid;gap:7px;justify-items:start}
+@media (max-width:820px){
+  .row{grid-template-columns:minmax(0,1fr) auto;gap:10px 14px}
+  .areas{grid-column:1 / -1;order:3}
+  .tierwrap{grid-column:1 / -1;order:4;grid-auto-flow:column;align-items:center;justify-content:space-between;width:100%}
+}
+.empty{background:var(--panel);border:1px dashed var(--line-2);border-radius:10px;padding:28px;text-align:center;color:var(--ink-2)}
+
+/* method */
+details.method{background:var(--panel);border:1px solid var(--line);border-radius:10px}
+details.method summary{cursor:pointer;padding:14px 16px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:10px}
+details.method summary::-webkit-details-marker{display:none}
+details.method summary::after{content:"+";font:500 18px/1 var(--f-mono);color:var(--ink-3)}
+details.method[open] summary::after{content:"–"}
+.method-body{padding:0 16px 16px;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));color:var(--ink-2);font-size:14px}
+.method-body h3{font:700 14px var(--f-display);color:var(--ink);margin:0 0 4px}
+.method-body p,.method-body ul{margin:0} .method-body ul{padding-left:18px}
+
+/* detail sheet */
+.scrim{position:fixed;inset:0;background:rgba(10,16,30,.42);z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;top:0;right:0;bottom:0;width:min(640px,100%);z-index:21;background:var(--panel);box-shadow:var(--shadow);transform:translateX(102%);transition:transform .25s ease;display:flex;flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.sheet.on{transform:none}
+.sheet-head{padding:20px 22px 16px;border-bottom:1px solid var(--line);display:grid;gap:10px}
+.sheet-head .top{display:flex;justify-content:space-between;gap:12px;align-items:start}
+.sheet-head h2{font:800 26px/1.1 var(--f-display);margin:0;letter-spacing:-.01em;text-wrap:balance}
+.close{all:unset;cursor:pointer;width:34px;height:34px;border-radius:8px;display:grid;place-items:center;color:var(--ink-2);border:1px solid var(--line);flex:none}
+.close:hover{background:var(--bg)} .close:focus-visible{outline:2px solid var(--accent)}
+.kv{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:520px){.kv{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kv div{background:var(--bg);border-radius:8px;padding:9px 10px;display:grid;gap:2px}
+.kv b{font:700 19px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.kv span{font-size:11.5px;color:var(--ink-3);line-height:1.25}
+.links{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13.5px;align-items:center}
+.copy{all:unset;cursor:pointer;font:12px var(--f-mono);color:var(--ink-2);border:1px solid var(--line-2);border-radius:6px;padding:3px 7px}
+.copy:focus-visible{outline:2px solid var(--accent)}
+.note{font-size:13px;border-radius:8px;padding:10px 12px;background:var(--review-soft);color:var(--ink)}
+.note b{color:var(--review)}
+.sheet-body{overflow-y:auto;padding:8px 22px 30px;flex:1}
+.sheet-body h4{font:500 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:18px 0 8px}
+.work{padding:12px 0;border-bottom:1px solid var(--line);display:grid;gap:5px}
+.work .t{font-weight:600;line-height:1.35}
+.work .m{font-size:12.5px;color:var(--ink-2)}
+.work .ev{font:11.5px/1.45 var(--f-mono);color:var(--ink-3)}
+.badge{font:600 10.5px/1 var(--f-body);letter-spacing:.04em;text-transform:uppercase;padding:3px 6px;border-radius:4px;margin-right:6px;vertical-align:1px}
+.badge.v{background:var(--core-soft);color:var(--core)} .badge.u{background:var(--review-soft);color:var(--review)}
+footer{color:var(--ink-3);font-size:12.5px}
+footer .wrap{padding-block:0 40px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="mast"><div class="wrap">
+  <div>
+    <div class="eyebrow">New York City College of Technology · CUNY</div>
+    <h1>City Tech AI Talent Pool</h1>
+  </div>
+  <p class="lede">Faculty with a publication record in artificial intelligence, ranked by evidence. Every entry links to the papers behind it, and papers that can't be tied to City Tech for certain are marked so a person can check them.</p>
+  <div class="facts" id="facts"></div>
+  <div class="tiers" id="tiers" role="group" aria-label="Filter by expertise tier"></div>
+</div></header>
+
+<div class="controls"><div class="wrap">
+  <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="Search names, paper titles, topics…" aria-label="Search"></label>
+  <select id="dept" aria-label="Department"></select>
+  <select id="area" aria-label="AI area"></select>
+  <label class="toggle"><input type="checkbox" id="rosterOnly"> Roster faculty only</label>
+  <button class="reset" id="reset" type="button">Clear filters</button>
+</div></div>
+
+<main><div class="wrap">
+  <div class="count" id="count"></div>
+  <div class="list" id="list" aria-live="polite"></div>
+  <details class="method" id="method">
+    <summary>How this list is built</summary>
+    <div class="method-body">
+      <div><h3>Sources</h3><p>Publications come from OpenAlex, which indexes Crossref, PubMed, arXiv and university repositories. The monthly update also checks ORCID records, Crossref and CUNY Academic Works. Faculty come from the City Tech department directories.</p></div>
+      <div><h3>What counts as an AI paper</h3><p>The paper's title uses specific AI terms (machine learning, neural network, LLM, computer vision, NLP and so on); or OpenAlex classifies it under an AI topic; or the abstract uses at least two such terms. Each paper shows the evidence that qualified it.</p></div>
+      <div><h3>Verified vs. unverified</h3><p><b>Verified</b> papers list City Tech as this person's affiliation, or sit on their own ORCID record. <b>Unverified</b> papers only share an OpenAlex author profile, and for common names that profile often merges different people. Tiers count verified papers only.</p></div>
+      <div><h3>Tiers</h3><ul id="tierdefs"></ul></div>
+      <div><h3>Not on roster yet</h3><p>People who publish with a City Tech affiliation but aren't in the directories loaded so far (mostly the technology and engineering departments). They need at least four City Tech papers, with one in the last six years, to appear here. Confirm their status before relying on it.</p></div>
+      <div><h3>Limits</h3><p>Publication records miss conference talks, grants, teaching, patents and industry work. Treat this list as a starting point for outreach, not a ranking of people.</p></div>
+    </div>
+  </details>
+</div></main>
+<footer><div class="wrap" id="foot"></div></footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-name" hidden></aside>
+
+<script id="talent-data" type="application/json">__EMBEDDED_DATA__</script>
+<script>
+(function(){
+const TIER_META = {
+  "Core AI expert": {v:"--core", s:"--core-soft", d:"5+ verified AI papers, 1+ in the last {r} years"},
+  "Active in AI":   {v:"--active", s:"--active-soft", d:"2+ verified AI papers, 1+ in the last {r} years"},
+  "Some AI work":   {v:"--some", s:"--some-soft", d:"At least one verified AI paper"},
+  "Needs review":   {v:"--review", s:"--review-soft", d:"AI papers on their profile, none tied to City Tech"}
+};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt = n => Number(n||0).toLocaleString("en-US");
+const state = {tier:"", q:"", dept:"", area:"", rosterOnly:false};
+let D, P = [];
+
+function load(){
+  const el = document.getElementById("talent-data");
+  const txt = (el.textContent||"").trim();
+  if (txt.startsWith("{")) return Promise.resolve(JSON.parse(txt));
+  return fetch("data/talent_pool.json", {cache:"no-store"}).then(r => { if(!r.ok) throw new Error(r.status); return r.json(); });
+}
+
+function tierStyle(t){ const m = TIER_META[t] || TIER_META["Some AI work"]; return `--t:var(${m.v});--ts:var(${m.s})`; }
+
+function spark(p){
+  // verified AI papers per year across the person's AI career window, drawn to one scale
+  const yrs = p.works.filter(w=>w.verified && w.year).map(w=>+w.year);
+  const all = p.works.map(w=>+w.year).filter(Boolean);
+  const now = new Date().getFullYear();
+  const lo = Math.min(now-11, ...all), hi = now;
+  const span = hi-lo+1, counts = new Array(span).fill(0), ucounts = new Array(span).fill(0);
+  p.works.forEach(w => { const y=+w.year; if(!y||y<lo) return; (w.verified?counts:ucounts)[y-lo]++; });
+  const mx = Math.max(1, ...counts.map((c,i)=>c+ucounts[i]));
+  const W=150,H=30,bw=W/span;
+  let bars="";
+  for(let i=0;i<span;i++){
+    const hv=counts[i]/mx*(H-4), hu=ucounts[i]/mx*(H-4);
+    if(hu) bars+=`<rect x="${(i*bw+1).toFixed(1)}" y="${(H-hv-hu).toFixed(1)}" width="${Math.max(1,bw-2).toFixed(1)}" height="${hu.toFixed(1)}" fill="var(--review)" opacity=".45"/>`;
+    if(hv) bars+=`<rect x="${(i*bw+1).toFixed(1)}" y="${(H-hv).toFixed(1)}" width="${Math.max(1,bw-2).toFixed(1)}" height="${hv.toFixed(1)}" fill="var(--t)"/>`;
+  }
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" role="img" aria-label="AI papers per year, ${lo} to ${hi}"><line x1="0" y1="${H-.5}" x2="${W}" y2="${H-.5}" stroke="var(--line-2)" stroke-width="1"/>${bars}</svg>`;
+}
+
+function matches(p){
+  if (state.tier && p.tier !== state.tier) return false;
+  if (state.rosterOnly && !p.on_roster) return false;
+  if (state.dept){ if (state.dept === "__none" ? p.on_roster : p.department !== state.dept) return false; }
+  if (state.area && !p.areas.includes(state.area)) return false;
+  if (state.q){
+    const q = state.q.toLowerCase();
+    const hay = [p.name, p.department, p.areas.join(" "), ...p.works.map(w=>w.title+" "+(w.themes||[]).join(" "))].join(" ").toLowerCase();
+    if (!q.split(/\s+/).every(t => hay.includes(t))) return false;
+  }
+  return true;
+}
+
+function renderTiers(){
+  const counts = {}; P.forEach(p => counts[p.tier]=(counts[p.tier]||0)+1);
+  $("#tiers").innerHTML = D.tiers.map(t => `<button type="button" class="tier-btn" data-tier="${esc(t)}" aria-pressed="${state.tier===t}" style="${tierStyle(t)}">
+      <span class="n">${counts[t]||0}</span><span class="l">${esc(t)}</span><span class="d">${esc(TIER_META[t].d.replace("{r}", D.recent_years))}</span></button>`).join("");
+  $("#tiers").querySelectorAll(".tier-btn").forEach(b => b.onclick = () => { state.tier = state.tier===b.dataset.tier ? "" : b.dataset.tier; renderTiers(); renderList(); });
+}
+
+function renderList(){
+  const rows = P.filter(matches);
+  $("#count").textContent = `${rows.length} of ${P.length} people` + (state.tier ? ` · ${state.tier}` : "");
+  if (!rows.length){ $("#list").innerHTML = `<div class="empty">No one matches these filters. <button class="reset" type="button" onclick="document.getElementById('reset').click()">Clear filters</button></div>`; return; }
+  $("#list").innerHTML = rows.map(p => {
+    const i = P.indexOf(p);
+    const dept = p.on_roster ? esc(p.department) + (p.title ? " · " + esc(p.title) : "") : `<span class="off">Not on roster yet</span>`;
+    const sub = p.unverified ? `+${p.unverified} unverified` : (p.recent ? `${p.recent} since ${new Date().getFullYear()-D.recent_years+1}` : `latest ${p.works.find(w=>w.verified)?.year || "—"}`);
+    return `<button type="button" class="row" data-i="${i}" style="${tierStyle(p.tier)}">
+      <span class="who"><span class="nm">${esc(p.name)}</span><span class="meta">${dept}</span></span>
+      <span class="areas">${p.areas.slice(0,3).map(a=>`<span class="chip">${esc(a)}</span>`).join("")}</span>
+      <span class="tierwrap"><span class="pill">${esc(p.tier)}</span>${spark(p)}</span>
+      <span class="nums"><span class="big">${p.verified}</span><span class="sm">verified AI<br>${esc(sub)}</span></span>
+    </button>`;
+  }).join("");
+  $("#list").querySelectorAll(".row").forEach(r => r.onclick = () => openSheet(P[+r.dataset.i], r));
+}
+
+let lastFocus = null;
+function openSheet(p, from){
+  lastFocus = from;
+  const ver = p.works.filter(w=>w.verified), unv = p.works.filter(w=>!w.verified);
+  const work = w => `<div class="work"><div class="t">${w.url?`<a href="${esc(w.url)}" target="_blank" rel="noopener">${esc(w.title)}</a>`:esc(w.title)}</div>
+     <div class="m"><span class="badge ${w.verified?"v":"u"}">${w.verified?"Verified":"Unverified"}</span>${esc(w.year)}${w.venue?" · "+esc(w.venue):""}${w.citations?` · ${fmt(w.citations)} citations`:""}</div>
+     ${w.themes?.length?`<div class="m">${w.themes.map(t=>`<span class="chip">${esc(t)}</span>`).join(" ")}</div>`:""}
+     <div class="ev">Why it counts: ${esc(w.evidence)}</div></div>`;
+  const oa = p.openalex_id ? `<a href="https://openalex.org/${esc(p.openalex_id)}" target="_blank" rel="noopener">OpenAlex profile</a>` : "";
+  const orcid = p.orcid ? `<a href="https://orcid.org/${esc(p.orcid)}" target="_blank" rel="noopener">ORCID ${esc(p.orcid)}</a>` : "";
+  const email = p.email ? `<span><span style="user-select:all">${esc(p.email)}</span> <button class="copy" type="button" data-copy="${esc(p.email)}">Copy</button></span>` : "";
+  const warn = !p.on_roster
+    ? `<div class="note"><b>Not on the roster yet.</b> This person publishes with a City Tech affiliation but isn't in the department directories loaded so far. Check their department and full-time status.</div>`
+    : (p.tier==="Needs review" || p.unverified > p.verified*2)
+      ? `<div class="note"><b>Check the unverified papers.</b> They sit on the same OpenAlex profile but don't list City Tech. With a common name, the profile may mix in other researchers' work.</div>` : "";
+  const sh = $("#sheet");
+  sh.style.cssText = tierStyle(p.tier);
+  sh.innerHTML = `<div class="sheet-head">
+      <div class="top"><div style="display:grid;gap:8px;min-width:0"><span class="pill">${esc(p.tier)}</span><h2 id="sheet-name">${esc(p.name)}</h2>
+        <div style="color:var(--ink-2);font-size:14px">${p.on_roster?esc(p.department)+(p.title?" · "+esc(p.title):""):"Department unknown"}</div></div>
+        <button class="close" type="button" aria-label="Close" id="close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+      <div class="kv"><div><b>${p.verified}</b><span>verified AI papers</span></div><div><b>${p.recent}</b><span>in the last ${D.recent_years} years</span></div>
+        <div><b>${fmt(p.ai_citations)}</b><span>citations of verified AI papers</span></div><div><b>${fmt(p.total_pubs)}</b><span>publications on profile${p.first_year?` (${p.first_year}–${p.last_year})`:""}</span></div></div>
+      ${p.areas.length?`<div class="areas">${p.areas.map(a=>`<span class="chip">${esc(a)}</span>`).join("")}</div>`:""}
+      <div class="links">${[oa,orcid,email].filter(Boolean).join("")}</div>
+      ${warn}
+    </div>
+    <div class="sheet-body">
+      ${ver.length?`<h4>Verified AI papers (${ver.length})</h4>${ver.map(work).join("")}`:""}
+      ${unv.length?`<h4>Unverified — same profile, no City Tech affiliation (${unv.length})</h4>${unv.map(work).join("")}`:""}
+    </div>`;
+  sh.hidden = false;
+  requestAnimationFrame(()=>{ sh.classList.add("on"); $("#scrim").classList.add("on"); });
+  $("#close").onclick = closeSheet; $("#close").focus();
+  sh.querySelectorAll("[data-copy]").forEach(b => b.onclick = () => {
+    const done = () => { b.textContent = "Copied"; setTimeout(()=>b.textContent="Copy", 1500); };
+    try { navigator.clipboard.writeText(b.dataset.copy).then(done, ()=>{}); } catch(e) {}
+  });
+}
+function closeSheet(){
+  const sh = $("#sheet"); sh.classList.remove("on"); $("#scrim").classList.remove("on");
+  setTimeout(()=>{ sh.hidden = true; }, 260); if (lastFocus) lastFocus.focus();
+}
+$("#scrim").onclick = closeSheet;
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
+
+function init(data){
+  D = data; P = data.people;
+  const s = data.stats;
+  const gen = new Date(data.generated + "T12:00:00");
+  $("#facts").innerHTML = [
+    `Updated <b>${gen.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}</b>`,
+    `<b>${fmt(s.roster_faculty)}</b> roster faculty`,
+    s.citytech_works ? `<b>${fmt(s.citytech_works)}</b> City Tech papers scanned` : "",
+    `<b>${fmt(s.ai_publications)}</b> verified AI papers`,
+    `<b>${fmt(P.length)}</b> people`
+  ].filter(Boolean).map(x=>`<span>${x}</span>`).join("");
+  $("#tierdefs").innerHTML = data.tiers.map(t => `<li><b>${esc(t)}:</b> ${esc(TIER_META[t].d.replace("{r}", data.recent_years))}</li>`).join("");
+  const depts = [...new Set(P.filter(p=>p.on_roster).map(p=>p.department))].sort();
+  $("#dept").innerHTML = `<option value="">All departments</option>` + depts.map(d=>`<option>${esc(d)}</option>`).join("") + `<option value="__none">Not on roster yet</option>`;
+  const areas = [...new Set(P.flatMap(p=>p.areas))].sort();
+  $("#area").innerHTML = `<option value="">All AI areas</option>` + areas.map(a=>`<option>${esc(a)}</option>`).join("");
+  $("#foot").textContent = `Data: OpenAlex (CC0), ORCID, Crossref, CUNY Academic Works. Generated ${data.generated}.`;
+  renderTiers(); renderList();
+}
+
+$("#q").addEventListener("input", e => { state.q = e.target.value.trim(); renderList(); });
+$("#dept").addEventListener("change", e => { state.dept = e.target.value; renderList(); });
+$("#area").addEventListener("change", e => { state.area = e.target.value; renderList(); });
+$("#rosterOnly").addEventListener("change", e => { state.rosterOnly = e.target.checked; renderList(); });
+$("#reset").addEventListener("click", () => { Object.assign(state,{tier:"",q:"",dept:"",area:"",rosterOnly:false}); $("#q").value=""; $("#dept").value=""; $("#area").value=""; $("#rosterOnly").checked=false; renderTiers(); renderList(); });
+
+load().then(init).catch(err => { $("#list").innerHTML = `<div class="empty">The talent pool data didn't load (${esc(err.message)}). If this is the GitHub site, run the monthly update once from the Actions tab.</div>`; });
+})();
+</script>
+
+</html>

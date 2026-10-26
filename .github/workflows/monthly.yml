@@ -1,0 +1,79 @@
+# Rebuilds the talent pool on the 1st of every month. See MAINTAINING.md for how it works.
+# Failures and anything needing a human open a GitHub issue, so alerts reach everyone who
+# watches this repository, not just whoever created this file.
+name: Monthly AI talent pool update
+
+on:
+  schedule:
+    - cron: "0 11 1 * *"     # 1st of every month, 11:00 UTC (7am New York)
+  workflow_dispatch:          # "Run workflow" button for on-demand updates
+    inputs:
+      force:
+        description: "Publish even if the safety checks object (only after checking the report)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r requirements-dev.txt
+
+      - name: Run tests first (stops here if a code change broke something)
+        run: python -m pytest -q tests
+
+      - name: Harvest publications and rebuild the talent pool
+        env:
+          OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}   # optional, free at openalex.org/settings/api
+        run: |
+          python citytech_pubs.py \
+            --roster roster.csv \
+            --overrides overrides.csv \
+            --email "${{ vars.CONTACT_EMAIL }}" \
+            --full-career \
+            --out output \
+            --site-data docs/data/talent_pool.json \
+            ${{ inputs.force && '--force' || '' }}
+
+      - name: Save results (also saves the report when a run is refused, which keeps the schedule alive)
+        if: always()
+        run: |
+          git config user.name  "talent-pool-bot"
+          git config user.email "talent-pool-bot@users.noreply.github.com"
+          git add output docs/data 2>/dev/null || true
+          git commit -m "Monthly update $(date -u +%Y-%m-%d) (${{ job.status }})" || echo "Nothing to commit"
+          git push || echo "Push failed"
+
+      - name: Open a review issue if anything changed or needs a human
+        if: success()
+        run: |
+          if python -c "import json,sys; sys.exit(0 if json.load(open('output/run_report.json'))['attention'] else 1)"; then
+            gh issue create --title "Talent pool review: $(date -u +'%B %Y')" \
+              --body "$(cat output/run_report.md; echo; echo "Run: $RUN_URL")"
+          fi
+
+      - name: Open (or update) a failure issue
+        if: failure()
+        run: |
+          body="The monthly update failed on $(date -u +%Y-%m-%d). Run log: $RUN_URL
+
+          Last month's data is still live; nothing was overwritten.
+          See MAINTAINING.md → Troubleshooting.
+
+          $( [ -f output/run_report.md ] && cat output/run_report.md )"
+          n=$(gh issue list --state open --search 'in:title "Monthly update failed"' --json number -q '.[0].number')
+          if [ -n "$n" ]; then gh issue comment "$n" --body "$body"; else gh issue create --title "Monthly update failed" --body "$body"; fi
