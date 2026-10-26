@@ -551,18 +551,22 @@ def merge(records, since=None):
 #  * "CNN" is also a news network and "deep learning" is also a teaching philosophy.
 
 AI_TOPIC_RE = re.compile(
-    r"neural net|machine learning|deep learning|natural language|language model|topic model|"
-    r"text (and document )?classif|sentiment|speech recogn|computer vision|image (recogn|classif|"
-    r"segment|retriev)|object detect|face recogn|pose and action|action recogn|video surveillance|"
-    r"reinforcement learning|robot|artificial intelligence|explainable|fuzzy|evolutionary|"
-    r"genetic algorithm|swarm|metaheuristic|bayesian (network|model)|knowledge (graph|represent)|"
-    r"semantic web|ontolog|data stream mining|anomaly detect|recommender|domain adaptation|"
-    r"few-shot|generative|adversarial|intelligent tutoring|multi-agent|ai-based|problem solving "
-    r"and planning|cognitive computing|data mining|machine translation|question answering|"
-    r"dialogue|chatbot|data classification", re.I)
+    r"\b(neural net|machine learning|deep learning|natural language|language model|topic model|"
+    r"text (and document )?classif|text mining|sentiment|speech recogn|speech and dialogue|"
+    r"computer vision|image (recogn|classif|segment|retriev)|object detect|face recogn|"
+    r"pose and action|action recogn|video surveillance|reinforcement learning|robotic path planning|"
+    r"sensor-based localization|social robot|artificial intelligence|explainable|fuzzy|"
+    r"evolutionary algorithm|genetic algorithm|swarm|metaheuristic|bayesian (network|model)|"
+    r"knowledge (graph|represent)|semantic web|ontologies|data stream mining|data mining|anomaly detect|"
+    r"recommender|domain adaptation|few-shot|generative (ai|model|adversarial)|adversarial robustness|"
+    r"intelligent tutoring|multi-agent|ai-based|problem solving and planning|cognitive computing|"
+    r"machine translation|question answering|chatbot|data classification|radiomics)", re.I)
+# Whole-word matching matters: "Neurodegenerative" contains "generative", "Paleontology" and
+# "Gerontology" contain "ontology". Robotics counts only where it's about learning, planning or
+# perception; robot hardware, mechanics and control are engineering, not AI.
 NOT_AI_TOPIC_RE = re.compile(r"quantum|cryptograph|coding theory|error[- ]correct|chaos|"
                              r"cellular automat|psychiatry|security and verification|educational robotics|"
-                             r"distributed control", re.I)
+                             r"distributed control|stability and synchronization", re.I)
 
 AI_TERMS = {
     "Machine learning": r"machine[- ]learning|supervised learning|unsupervised learning|"
@@ -649,7 +653,8 @@ def classify_ai(row):
     elif abs_terms:
         weak.append("abstract: " + next(iter(abs_terms)))
     evidence = strong + weak
-    is_ai = bool(strong) or len(weak) >= 2
+    weak_terms = {w.split(": ", 1)[1] for w in weak}      # same phrase in keywords + abstract = one signal
+    is_ai = bool(strong) or len(weak_terms) >= 2
     # "deep learning" as a teaching philosophy, not neural networks
     if is_ai and all("deep learning" in e or "deep-learning" in e for e in evidence) \
             and EDU_RE.search(title + " " + abstract):

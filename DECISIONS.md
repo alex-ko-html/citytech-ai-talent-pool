@@ -42,6 +42,13 @@ Each exclusion fixes a real false positive found in review:
   isn't enough on its own.
 - "AI" in a title counts only in capitals, so "aid" and "Ai Weiwei" don't.
 
+- (2026-10-26, first GitHub run, which checked every paper rather than only papers with AI words)
+  Topic names are matched as whole words: "Neurodegenerative" contains "generative", and
+  "Paleontology" and "Gerontology" contain "ontology". Robotics topics count only for learning,
+  planning or perception (path planning, localization, social robots), not robot hardware,
+  mechanics or control (micro/nano robotics, soft robotics, prosthetics). The same phrase
+  appearing in both keywords and abstract counts as one weak signal, not two.
+
 The cases are kept as tests in `tests/test_classifier.py`.
 
 ### Tiers (2026-10)

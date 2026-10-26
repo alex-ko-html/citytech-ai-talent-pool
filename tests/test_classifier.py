@@ -42,3 +42,23 @@ def test_single_passing_mention_in_abstract_is_not_enough():
 
 def test_ai_topic_names_count():
     assert ai("Efficient models for edge devices", topics=[("Advanced Neural Network Applications", "Artificial Intelligence", .8)])
+
+
+def test_words_inside_other_words_dont_count():
+    # found on the first GitHub run (2026-10-26)
+    assert not ai("Synthesis and molecular docking of caffeic acid analogues",
+                  topics=[("Cholinesterase and Neurodegenerative Diseases", "Pharmacology", .9)])
+    assert not ai("Diversity-dependent cladogenesis throughout western Mexico",
+                  topics=[("Evolution and Paleontology Studies", "Paleontology", .9)])
+    assert not ai("Frailty in older adults", topics=[("Aging and Gerontology Research", "Gerontology", .9)])
+
+
+def test_robot_hardware_is_not_ai():
+    assert not ai("Dynamic self-assembly of magnetic micro-swimmers", topics=[("Micro and Nano Robotics", "Biomedical Engineering", .9)])
+    assert not ai("A pneumatic gripper", topics=[("Soft Robotics and Applications", "Control and Systems Engineering", .9)])
+    assert ai("Path planning for warehouse robots", topics=[("Robotic Path Planning Algorithms", "Artificial Intelligence", .9)])
+
+
+def test_same_phrase_twice_is_one_weak_signal():
+    assert not ai("Star Wars at Fifty", keywords="artificial intelligence", abstract="the film imagines artificial intelligence")
+    assert not ai("Global Finance", keywords="multi-agent", abstract="a multi-agent view of markets")

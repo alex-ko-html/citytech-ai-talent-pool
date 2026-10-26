@@ -3,6 +3,10 @@
 Notable changes to the rules, data or website. Newest first. (Routine monthly data updates
 are not listed; they're in the commit history and `output/run_report.md`.)
 
+## 2026-10-26
+- Moved to GitHub (alex-ko-html/citytech-ai-talent-pool); public site on GitHub Pages.
+- First GitHub run exposed topic false positives (substring matches, robot hardware); rules tightened, tests added.
+
 ## 2026-10
 - Handover setup: `overrides.csv` for review decisions, safety checks that refuse broken runs,
   monthly `run_report.md`, GitHub issues for failures and review, test suite, semester reminder,
