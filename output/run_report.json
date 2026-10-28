@@ -18,15 +18,15 @@
   "items_to_check": 182,
   "items_excluded": 21,
   "by_type": {
-   "Journal article": 2070,
-   "Other": 824,
-   "Paper (venue type unclear)": 746,
-   "Conference presentation": 465,
+   "Journal article": 2119,
+   "Conference paper": 803,
+   "Paper (venue type unclear)": 757,
+   "Conference presentation": 508,
    "Book chapter": 411,
    "Book": 381,
    "Grant": 353,
-   "Conference paper": 147,
    "Preprint": 71,
+   "Other": 65,
    "Open educational resource": 46,
    "Technical report": 17,
    "Patent": 7,
@@ -44,64 +44,10 @@
   "ai_people": 58,
   "citytech_works": 3155
  },
- "new_ai_people": [
-  [
-   "Ting Chin",
-   "Some AI work",
-   "Architectural Technology"
-  ],
-  [
-   "Claudia Hernandez-Feiks",
-   "Some AI work",
-   "Architectural Technology"
-  ],
-  [
-   "Jihun Kim",
-   "Some AI work",
-   "Architectural Technology"
-  ]
- ],
- "tier_changes": [
-  [
-   "Lin Zhou",
-   "Needs review",
-   "none"
-  ]
- ],
- "new_faculty": [
-  "Phillip Anzalone (Architectural Technology)",
-  "Alexander Aptekar (Architectural Technology)",
-  "Illya Azaroff (Architectural Technology)",
-  "Esteban Beita Solano (Architectural Technology)",
-  "Jill Bouratoglou (Architectural Technology)",
-  "Ting Chin (Architectural Technology)",
-  "Kenneth Conzelmann (Architectural Technology)",
-  "Lia Dikigoropoulou (Architectural Technology)",
-  "Michael Duddy (Architectural Technology)",
-  "Wendell Edwards (Architectural Technology)",
-  "Claudia Hernandez-Feiks (Architectural Technology)",
-  "Kevin Hom (Architectural Technology)",
-  "Jihun Kim (Architectural Technology)",
-  "Paul King (Architectural Technology)",
-  "Anne Leonhardt (Architectural Technology)",
-  "Elena M'Bouroukounda (Architectural Technology)",
-  "Eugene Seungho Park (Architectural Technology)",
-  "Shelley Smith (Architectural Technology)",
-  "Sanjive Vaidya (Architectural Technology)",
-  "Jieun Yang (Architectural Technology)",
-  "Robert Zagaroli (Architectural Technology)",
-  "Karen Bonsignore (Health Sciences)",
-  "Shamard Charles (Health Sciences)",
-  "Katherine Gregory (Health Sciences)",
-  "Sitaji Gurung (Health Sciences)",
-  "Keanu Renne-Glover (Health Sciences)",
-  "Noemi Rodriguez (Health Sciences)",
-  "Delia Williams-Gunpot (Health Sciences)",
-  "Dina Zein (Health Sciences)"
- ],
- "left_directory": [
-  "Michael Loo"
- ],
+ "new_ai_people": [],
+ "tier_changes": [],
+ "new_faculty": [],
+ "left_directory": [],
  "items_to_check": 182,
  "attention": true,
  "source_stats": {
