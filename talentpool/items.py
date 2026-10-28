@@ -46,7 +46,11 @@ def type_from_openalex(work_type, source_type="", venue=""):
     return {"book-chapter": "Book chapter", "book": "Book", "monograph": "Book", "report": "Technical report",
             "preprint": "Preprint", "dataset": "Dataset", "dissertation": "Dissertation",
             "review": "Journal article", "letter": "Journal article", "editorial": "Other",
-            "standard": "Technical report", "reference-entry": "Book chapter"}.get(t, "Other")
+            "standard": "Technical report", "reference-entry": "Book chapter",
+            "conference-paper": "Conference paper", "proceedings-article": "Conference paper",
+            "conference-abstract": "Conference presentation", "poster": "Conference presentation",
+            "presentation": "Conference presentation", "patent": "Patent",
+            "book-section": "Book chapter", "book-part": "Book chapter"}.get(t) or _by_venue(st, venue)
 
 
 def type_from_text(*texts):

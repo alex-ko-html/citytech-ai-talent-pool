@@ -179,3 +179,12 @@ def test_items_to_check_stay_manageable(tmp_path):
     lin = [i for i in p["items"] if p["faculty"][i["p"]]["name"] == "Lin Zhou"]
     assert all(i["ok"] for i in lin)                                         # merged profile set aside entirely
     assert any("probably several people" in w for w in rep["warnings"])
+
+
+def test_openalex_types():
+    from talentpool.items import type_from_openalex as t
+    assert t("conference-paper", "conference", "ASEE Annual Conference and Exposition") == "Conference paper"
+    assert t("conference-abstract", "", "ECS Meeting Abstracts") == "Conference presentation"
+    assert t("some-new-type", "journal", "Journal X") == "Journal article"        # unknown types use the venue
+    assert t("other", "", "IEEE Frontiers in Education Conference (FIE)") == "Conference paper"
+    assert t("erratum") is None
