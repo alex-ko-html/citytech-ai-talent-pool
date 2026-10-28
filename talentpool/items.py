@@ -22,8 +22,7 @@ NOT_RESEARCH = {"paratext", "erratum", "retraction", "supplementary-materials", 
 SOURCE_RANK = {"OpenAlex": 0, "CUNY Academic Works": 1, "ORCID": 2, "NSF": 3, "NIH": 4,
                "Dept bio": 5, "Google Scholar": 6, "Crossref": 7, "Manual": 8}
 HIGH_SOURCES = {"CUNY Academic Works": "in CUNY Academic Works", "ORCID": "on their own ORCID record",
-                "NSF": "NSF award to City Tech", "NIH": "NIH award to City Tech",
-                "Dept bio": "listed in their faculty bio"}
+                "NSF": "NSF award to City Tech", "NIH": "NIH award to City Tech"}
 
 
 def type_from_openalex(work_type, source_type="", venue=""):
@@ -148,10 +147,10 @@ def set_confidence(it):
         reason = next((HIGH_SOURCES[s] for s in it["sources"] if s in HIGH_SOURCES), "")
     if reason:
         return f"High ({reason})" + (f"; {len(it['sources'])} sources" if len(it["sources"]) > 1 else "")
-    if it.get("confidence"):                      # supplied by an uploaded workbook
-        return it["confidence"]
+    if it.get("confidence") and not (len(it["sources"]) > 1 and it["confidence"].startswith("Low")):
+        return it["confidence"]                   # supplied by the source (bio, uploaded workbook)
     if len(it["sources"]) > 1:
-        return "Medium (found in " + " and ".join(it["sources"]) + ")"
+        return "High (found in " + " and ".join(it["sources"]) + ")"
     if it["sources"] == ["Google Scholar"]:
         return "Medium (Google Scholar profile listing City Tech)"
     return "Low (same-name author profile; no City Tech affiliation on the paper)"

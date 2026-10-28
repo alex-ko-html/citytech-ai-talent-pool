@@ -369,31 +369,73 @@ class _BioParser(HTMLParser):
             self.stack.pop()
 
 
+AUTHORISH = re.compile(r"^(?:[A-Z][\w'\-]+,?\s+(?:[A-Z]\.\s*){1,3},?\s*(?:and\s+|&\s+)?)+$|"
+                       r"^(?:[A-Z]\.\s*){1,3}[A-Z][\w'\-]+(?:,\s*(?:[A-Z]\.\s*){1,3}[A-Z][\w'\-]+)*$")
+NOT_TITLE = re.compile(r"^(?:\[|\(|panelists?:|pp\.|vol\.|doi|https?:|in:|retrieved|available)", re.I)
+
+
+def good_title(t):
+    """A usable title has real words, isn't a page range or an author list."""
+    t = (t or "").strip(" .,;:")
+    words = re.findall(r"[A-Za-z]{2,}", t)
+    if len(words) < 3 or sum(len(w) for w in words) < 12:
+        return False
+    if NOT_TITLE.search(t) or AUTHORISH.match(t) or re.match(r"^(?:and|in|at|of|the end)\b", t):
+        return False
+    if len(re.findall(r"\d", t)) > len(t) * 0.3:
+        return False
+    return True
+
+
+LEAD_AUTHORS = re.compile(
+    r"^(?:(?:[A-Z][\w'\-]+,?\s+[A-Z]{1,3}\b\.?,?\s*(?:and\s+|&\s+)?)+"                 # Hatzi K, Jiang Y,
+    r"|(?:(?:[A-Z]\.\s*){1,3}[A-Z][\w'\-]+(?:,\s*|\s+and\s+|\s*&\s*))+)")                # C. Calinescu, M. Penn and
+
+
+def _strip_authors(t):
+    t = re.sub(r"^\s*\[\d+\]\s*", "", t)
+    m = LEAD_AUTHORS.match(t)
+    return t[m.end():].lstrip(" ,.:") if m and m.end() < len(t) - 10 else t
+
+
 def parse_citation(text, links):
-    year = re.search(r"\((\d{4})\)|\b((?:19|20)\d\d)\b", text)
+    text = re.sub(r"[\u200b-\u200d\ufeff]", "", text)
+    this_year = time.localtime().tm_year
+    years = [y for y in re.findall(r"\b(19[5-9]\d|20\d\d)\b", text) if int(y) <= this_year + 1]
+    paren = re.search(r"\((19[5-9]\d|20\d\d)[a-z]?\)", text)
+    year = paren.group(1) if paren else (years[0] if years else "")
     doi = re.search(r"\b10\.\d{4,9}/[^\s\"<>]+", text + " " + " ".join(links))
     url = next((l for l in links if l.startswith("http")), "")
-    title = ""
-    q = re.search(r"[\"“”]([^\"“”]{12,}?)[,.]?[\"“”]", text)
+    candidates = []
+    q = re.search(r"[\"\u201c\u201d]([^\"\u201c\u201d]{12,}?)[,.]?[\"\u201c\u201d]", text)
     if q:
-        title = q.group(1)
-    elif year and year.group(1):
-        after = text[year.end():].lstrip(" .,:")
-        title = re.split(r"(?<=[a-z0-9\)\?])\.\s", after, maxsplit=1)[0]
-    else:
-        parts = re.split(r"\.\s", text)
-        title = max(parts[:3], key=len) if parts else text
-    authors = text[:year.start()].strip(" ,.") if year and year.group(1) else ""
-    amount = re.search(r"\$\s?([\d,]+(?:\.\d+)?)\s*(k|K|M|million)?", text)
+        candidates.append(q.group(1))
+    if paren:
+        candidates.append(re.split(r"(?<=[a-z0-9\)\?])\.\s", text[paren.end():].lstrip(" .,:"), maxsplit=1)[0])
+    segments = [x.strip() for x in re.split(r"(?<=[a-z0-9\)\?\u201d\"])\.\s+", text) if x.strip()]
+    candidates += sorted(segments[:4], key=lambda x: -len(re.findall(r"[a-z]{3,}", x)))
+    candidates = [_strip_authors(c) for c in candidates]
+    title = next((c for c in candidates if good_title(c)), "")
+    clean = bool(title)
+    if not title:
+        title = text[:200]
+    authors = text[:paren.start()].strip(" ,.") if paren else ""
+    amount = re.search(r"\$\s?(\d[\d,]*(?:\.\d+)?)\s*(k|K|M|million)?", text)
     amt = ""
     if amount:
         v = float(amount.group(1).replace(",", ""))
-        mult = {"k": 1e3, "K": 1e3, "M": 1e6, "million": 1e6}.get(amount.group(2) or "", 1)
-        amt = int(v * mult)
-    role = "PI" if re.search(r"\bPI\b|principal investigator", text) and not re.search(r"\bco-?PI\b", text, re.I) else (
-        "Co-PI" if re.search(r"\bco-?PI\b|co-principal", text, re.I) else "")
-    return {"year": (year.group(1) or year.group(2)) if year else "", "doi": doi.group(0).rstrip(".,;)") if doi else "",
-            "url": url, "title": title.strip(" .,\"“”")[:400], "authors": authors[:500], "amount": amt, "role": role}
+        amt = int(v * {"k": 1e3, "K": 1e3, "M": 1e6, "million": 1e6}.get(amount.group(2) or "", 1))
+    role = "Co-PI" if re.search(r"\bco-?PI\b|co-principal", text, re.I) else (
+        "PI" if re.search(r"\bPI\b|principal investigator", text) else "")
+    return {"year": year, "doi": doi.group(0).rstrip(".,;)") if doi else "", "url": url,
+            "title": title.strip(" .,\"\u201c\u201d")[:400], "authors": authors[:500], "amount": amt,
+            "role": role, "clean": clean}
+
+
+GRANT_WORDS = re.compile(r"\bgrants?\b|\bNSF\b|\bNIH\b|PSC[- ]?CUNY|research award|funded|funding|"
+                         r"foundation award|fellowship|\$\s?\d", re.I)
+HONOR_WORDS = re.compile(r"\bprize\b|finalist|\bhonou?r|winner|nominat|recognition|best paper|award for",
+                         re.I)
 
 
 def harvest_bios(roster):
@@ -421,15 +463,23 @@ def harvest_bios(roster):
             text, links = ev[1], ev[2]
             if len(text) < 25:
                 continue
-            c = parse_citation(text, links)
+            try:
+                c = parse_citation(text, links)
+            except Exception as e:  # noqa: BLE001  one odd entry must never stop the run
+                log(f"  ! could not read a bio entry for {p['full_name']}: {e}")
+                continue
             kind = type_from_text(sub or "", section) if (sub or not re.search(r"^publications?$", section, re.I)) \
                 else type_from_text(text)
+            if kind == "Grant" and (HONOR_WORDS.search(text) or not GRANT_WORDS.search(text + " " + section)):
+                kind = "Other"                    # prizes and honors listed under "Awards" aren't grants
             if kind == "Paper (venue type unclear)" and re.search(r"journal|vol\.|\d+\(\d+\)", text, re.I):
                 kind = "Journal article"
             items.append(new_item(p["key"], "Dept bio", item_type=kind, title=c["title"], year=c["year"],
                                   authors=c["authors"], doi=c["doi"], url=c["url"] or (f"https://doi.org/{c['doi']}" if c["doi"] else ""),
                                   amount=c["amount"] if kind == "Grant" else "", role=c["role"] if kind == "Grant" else "",
-                                  citation_as_listed=text[:1500], verified=True))
+                                  citation_as_listed=text[:1500], verified=c["clean"],
+                                  confidence="Medium (self-reported in faculty bio)" if c["clean"] else
+                                  "Low (bio entry could not be read cleanly; see CitationAsListed)"))
     STATS["bio_items"] = len(items)
     log(f"Faculty bios: {len(items)} self-reported items")
     return items
