@@ -3,59 +3,119 @@
  "status": "OK",
  "problems": [],
  "warnings": [
-  "Directory, Architectural Technology: directory unavailable and no saved copy.",
-  "Directory, Health Sciences: directory unavailable and no saved copy."
+  "Yu-Wen Chen: OpenAlex profile has 773 papers without City Tech affiliation, probably several people with this name; set aside. Adding their ORCID iD (faculty_extra.csv) fixes this.",
+  "Yu Wang: OpenAlex profile has 3149 papers without City Tech affiliation, probably several people with this name; set aside. Adding their ORCID iD (faculty_extra.csv) fixes this.",
+  "Lin Zhou: OpenAlex profile has 226 papers without City Tech affiliation, probably several people with this name; set aside. Adding their ORCID iD (faculty_extra.csv) fixes this.",
+  "Xiangdong Li: OpenAlex profile has 931 papers without City Tech affiliation, probably several people with this name; set aside. Adding their ORCID iD (faculty_extra.csv) fixes this.",
+  "Lili Ma: OpenAlex profile has 264 papers without City Tech affiliation, probably several people with this name; set aside. Adding their ORCID iD (faculty_extra.csv) fixes this.",
+  "Yang Kim: OpenAlex profile has 260 papers without City Tech affiliation, probably several people with this name; set aside. Adding their ORCID iD (faculty_extra.csv) fixes this.",
+  "David Smith: OpenAlex profile has 285 papers without City Tech affiliation, probably several people with this name; set aside. Adding their ORCID iD (faculty_extra.csv) fixes this."
  ],
  "stats": {
-  "faculty": 368,
-  "departments": 26,
-  "items": 5413,
-  "items_to_check": 9243,
-  "items_excluded": 386,
+  "faculty": 396,
+  "departments": 28,
+  "items": 5546,
+  "items_to_check": 182,
+  "items_excluded": 21,
   "by_type": {
-   "Journal article": 2028,
-   "Other": 854,
-   "Paper (venue type unclear)": 676,
-   "Conference presentation": 453,
-   "Book chapter": 405,
-   "Book": 380,
-   "Grant": 329,
-   "Conference paper": 143,
-   "Preprint": 70,
-   "Open educational resource": 45,
-   "Technical report": 15,
+   "Journal article": 2070,
+   "Other": 824,
+   "Paper (venue type unclear)": 746,
+   "Conference presentation": 465,
+   "Book chapter": 411,
+   "Book": 381,
+   "Grant": 353,
+   "Conference paper": 147,
+   "Preprint": 71,
+   "Open educational resource": 46,
+   "Technical report": 17,
    "Patent": 7,
    "Dissertation": 5,
    "Dataset": 3
   },
   "by_source": {
-   "OpenAlex": 2969,
-   "Dept bio": 2919,
-   "CUNY Academic Works": 1069,
-   "NSF": 109,
+   "OpenAlex": 3042,
+   "Dept bio": 2960,
+   "CUNY Academic Works": 1129,
+   "NSF": 114,
    "NIH": 5
   },
-  "ai_items": 154,
-  "ai_people": 55,
+  "ai_items": 157,
+  "ai_people": 58,
   "citytech_works": 3155
  },
+ "new_ai_people": [
+  [
+   "Ting Chin",
+   "Some AI work",
+   "Architectural Technology"
+  ],
+  [
+   "Claudia Hernandez-Feiks",
+   "Some AI work",
+   "Architectural Technology"
+  ],
+  [
+   "Jihun Kim",
+   "Some AI work",
+   "Architectural Technology"
+  ]
+ ],
+ "tier_changes": [
+  [
+   "Lin Zhou",
+   "Needs review",
+   "none"
+  ]
+ ],
+ "new_faculty": [
+  "Phillip Anzalone (Architectural Technology)",
+  "Alexander Aptekar (Architectural Technology)",
+  "Illya Azaroff (Architectural Technology)",
+  "Esteban Beita Solano (Architectural Technology)",
+  "Jill Bouratoglou (Architectural Technology)",
+  "Ting Chin (Architectural Technology)",
+  "Kenneth Conzelmann (Architectural Technology)",
+  "Lia Dikigoropoulou (Architectural Technology)",
+  "Michael Duddy (Architectural Technology)",
+  "Wendell Edwards (Architectural Technology)",
+  "Claudia Hernandez-Feiks (Architectural Technology)",
+  "Kevin Hom (Architectural Technology)",
+  "Jihun Kim (Architectural Technology)",
+  "Paul King (Architectural Technology)",
+  "Anne Leonhardt (Architectural Technology)",
+  "Elena M'Bouroukounda (Architectural Technology)",
+  "Eugene Seungho Park (Architectural Technology)",
+  "Shelley Smith (Architectural Technology)",
+  "Sanjive Vaidya (Architectural Technology)",
+  "Jieun Yang (Architectural Technology)",
+  "Robert Zagaroli (Architectural Technology)",
+  "Karen Bonsignore (Health Sciences)",
+  "Shamard Charles (Health Sciences)",
+  "Katherine Gregory (Health Sciences)",
+  "Sitaji Gurung (Health Sciences)",
+  "Keanu Renne-Glover (Health Sciences)",
+  "Noemi Rodriguez (Health Sciences)",
+  "Delia Williams-Gunpot (Health Sciences)",
+  "Dina Zein (Health Sciences)"
+ ],
+ "left_directory": [
+  "Michael Loo"
+ ],
+ "items_to_check": 182,
+ "attention": true,
  "source_stats": {
   "openalex_citytech_works": 3155,
-  "openalex_items": 12963,
+  "openalex_items": 13210,
   "academic_works_records": 2049,
-  "academic_works_items": 1083,
+  "academic_works_items": 1159,
   "orcid_items": 0,
   "nsf_awards": 75,
-  "nsf_items": 110,
+  "nsf_items": 116,
   "nih_projects": 8,
   "nih_items": 5,
-  "bio_items": 3117,
-  "imported_items": 0
- },
- "new_ai_people": [],
- "tier_changes": [],
- "new_faculty": [],
- "left_directory": [],
- "items_to_check": 9243,
- "attention": true
+  "bio_items": 3160,
+  "imported_items": 0,
+  "unconfirmed_set_aside": 9593
+ }
 }
