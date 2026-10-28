@@ -1,8 +1,8 @@
-# Runs the test suite on every change, so edits to the rules can't silently break the monthly job.
+# Runs the tests on every code change, so edits to the rules can't silently break the monthly job.
 name: Tests
 on:
   push:
-    paths-ignore: ["output/**", "docs/data/**"]
+    paths-ignore: ["output/**", "docs/data/**", "data/**", "inbox/**", "*.md"]
   pull_request:
 jobs:
   test:

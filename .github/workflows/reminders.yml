@@ -1,6 +1,5 @@
-# Twice a year, opens an issue reminding the maintainer to refresh the faculty roster
-# (new hires and departures happen at semester start) and to confirm who owns the project.
-name: Roster refresh reminder
+# Twice a year (start of each semester) opens a short checklist issue for the maintainer.
+name: Semester checklist
 on:
   schedule:
     - cron: "0 13 20 1,8 *"   # Jan 20 and Aug 20
@@ -15,11 +14,11 @@ jobs:
     steps:
       - run: |
           gh issue create --repo "${{ github.repository }}" \
-            --title "Semester checklist: refresh the roster ($(date -u +'%B %Y'))" \
-            --body "- [ ] Save the current department directory pages (full-time + adjunct tabs) as PDFs
-          - [ ] Run \`python tools/build_roster.py path/to/pdfs\` and commit the new roster.csv
-          - [ ] Look at last month's report for \"Not on roster yet\" people and confirm their departments
+            --title "Semester checklist ($(date -u +'%B %Y'))" \
+            --body "- [ ] Open the dashboard: does each department show its new hires? (The faculty list updates itself from the directories.)
+          - [ ] Download the Excel and work through the *Items To Check* tab; upload it back
+          - [ ] Read the last monthly report's warnings (output/run_report.md)
           - [ ] Check OWNERS.md is still accurate (maintainer, backup, sponsor)
-          - [ ] Confirm the OpenAlex API key in Settings → Secrets still works (see MAINTAINING.md)
+          - [ ] Confirm the OpenAlex API key secret still works (MAINTAINING.md section 3)
 
-          Full steps: MAINTAINING.md → Every semester."
+          Details: MAINTAINING.md → Every semester."

@@ -1,0 +1,49 @@
+# Runs when someone uploads a file to inbox/ (the dashboard's Upload button):
+# turns the checks and corrections into review decisions, then rebuilds the site.
+name: Process uploads
+
+on:
+  push:
+    branches: [main]
+    paths: ["inbox/*.xlsx", "inbox/*.csv"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+  issues: write
+
+concurrency:
+  group: talent-pool-data
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Apply uploaded files
+        run: |
+          python -m talentpool.inbox | tee upload_summary.txt
+          echo "## Upload processed" >> "$GITHUB_STEP_SUMMARY"; cat upload_summary.txt >> "$GITHUB_STEP_SUMMARY"
+      - name: Save decisions
+        run: |
+          git config user.name  "talent-pool-bot"
+          git config user.email "talent-pool-bot@users.noreply.github.com"
+          git add -A inbox overrides.csv faculty_extra.csv data
+          git commit -m "Apply upload from ${{ github.actor }}: $(head -c 200 upload_summary.txt)" || exit 0
+          git push
+      - name: Rebuild the site with the changes
+        run: gh workflow run monthly.yml --ref main
+      - name: Tell the uploader if something went wrong
+        if: failure()
+        run: |
+          gh issue create --title "Upload could not be processed" --body "Uploaded by @${{ github.actor }}. Run log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          The file stays in inbox/ until it's fixed. Usual causes: the file isn't the talent pool workbook or the CUNY template, or columns were renamed. See MAINTAINING.md → Uploads."

@@ -99,3 +99,38 @@ Considered Cloudflare Pages + Cloudflare Access (free; lets the repository stay 
 limits viewers to CUNY email addresses). Chose a public GitHub Pages site because everything
 shown is already public (bibliographic records, the faculty directory) and one platform means
 one fewer account to hand over. To switch to CUNY-only access, follow MAINTAINING.md section 10.
+
+### Version 2: faculty from the directories, every item type, Excel round-trip (2026-10-28)
+Restructured after review feedback (a sketch of the dashboard plus the CUNY Talent Pool
+publication data template, first used for Computer Engineering Technology):
+
+- **Faculty list from the department directories, not PDFs.** Each directory page names its
+  department ID; the page loads people from `/dashboard/odata/Employees?$filter=Dept_ID eq N`. The job
+  makes that same per-department request monthly and keeps only name, title, email, office and bio
+  (never phone numbers). The CET pilot used the same feed. Titles are sorted into full-time / adjunct /
+  staff with the lists the college's own directory script uses. If the site is down, last month's copy is
+  used; if more than half the departments can't be read, the run is refused.
+- **All item types, not only papers.** Types follow the template (Journal article, Conference paper,
+  Book, Book chapter, Conference presentation, Technical report, Paper (venue type unclear), Patent,
+  Grant) plus Preprint, Dataset, Dissertation, Open educational resource, Other. OpenAlex "article" is
+  split by venue type (journal vs conference); errata, paratext and similar go to Items Excluded.
+- **Grants from NSF and NIH.** Both are free public APIs. NSF lists co-investigators with their
+  @citytech.cuny.edu email, so they're matched exactly. NIH yearly records are combined per project.
+- **Faculty bios are a source ("Dept bio").** Many bios list publications and grants under headings.
+  These are read with rules (headings decide the type; quotes or the text after "(year)" give the title)
+  and merged with matching items from other sources.
+- **Google Scholar via uploads only.** It has no API and blocks automated access (CAPTCHA). Teams can
+  upload workbooks in the template; their items merge in with their stated sources and confidence.
+- **Confidence replaces verified/unverified.** High = the paper lists City Tech, or it's in Academic Works,
+  an NSF/NIH award to City Tech, their ORCID record, their bio, or a reviewer confirmed it. Medium = two
+  sources, or a Scholar profile listing City Tech. Low = only a same-name author profile (these go to
+  Items To Check and never count toward a tier).
+- **Permanent ItemIDs** (DEPT-0001), stored in `data/item_ids.csv`, so a reviewer's tick still points at
+  the same item next month. Uploaded workbooks from other teams use their own numbering, so their
+  IDs are ignored and their rows imported as new items (duplicates merge).
+- **Review happens in Excel.** Static hosting can't save clicks, and a login system would be more to
+  hand over. So the dashboard links to the Excel; reviewers tick Check / fix cells and upload it,
+  and every decision becomes a row in overrides.csv with the reviewer's name.
+- **"Not on roster yet" removed.** With every department's directory read, City Tech authors who
+  don't match anyone are students, visitors or former faculty. They're listed in `output/unmatched_authors.csv`.
+- **Crossref not queried separately.** OpenAlex already includes Crossref's DOIs and metadata.

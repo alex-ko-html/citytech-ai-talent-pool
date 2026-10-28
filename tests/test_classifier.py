@@ -1,6 +1,6 @@
 """Known cases from calibrating against real City Tech data (Oct 2026). If you change the
 AI rules, these tell you whether you re-introduced an old false positive."""
-import citytech_pubs as C
+import talentpool.ai as C
 
 
 def ai(title, abstract="", keywords="", topics=()):

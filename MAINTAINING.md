@@ -1,194 +1,182 @@
 # Maintaining the City Tech AI Talent Pool
 
-This is the handbook for whoever looks after this project. It assumes no programming
-background for the routine parts. Everything routine happens in a web browser on GitHub.
+This is the handbook for whoever looks after this project. The routine parts need no
+programming. Everything happens in a web browser, on GitHub and in Excel.
 
-**Time needed:** about 15 minutes a month, plus about an hour each semester.
+**Time needed:** about 15 minutes a month, plus an hour each semester to work through items to check.
 
 ---
 
 ## 1. What this project is
 
-CUNY wants to know which City Tech faculty are experts in artificial intelligence. Google
-Scholar pages are often out of date, so this project builds the list from publication
-databases instead and refreshes it every month.
+CUNY wants to know which City Tech faculty work in artificial intelligence. Google Scholar pages
+are often out of date, so this project builds the record from the sources themselves and
+refreshes it every month. It uses **no AI model**: everything is sorted with written rules.
 
 ```
- roster.csv ──┐   (who the faculty are: built from the department directory pages)
-              ▼
- GitHub Actions, 1st of every month
-   1. runs the tests
-   2. citytech_pubs.py pulls every City Tech paper from OpenAlex, plus ORCID,
-      Crossref and CUNY Academic Works
-   3. tags AI papers, ranks people into tiers, applies the review decisions in overrides.csv
-   4. safety checks: refuses to publish if the results look broken
-   5. saves docs/data/talent_pool.json  ──►  website (GitHub Pages, docs/index.html)
-   6. opens a GitHub issue if anything needs a person to look at it
+ City Tech department directories ──► faculty list (names, titles, offices, bios)
+                                                   │
+ OpenAlex · CUNY Academic Works · ORCID ·          ▼
+ NSF · NIH · faculty bios · uploaded Excel ──► items (papers, presentations, grants, patents)
+                                                   │  merge duplicates, sort by type,
+                                                   │  confidence, permanent ItemID, AI flag
+                                                   ▼
+                       Excel workbook (CUNY template)  +  online dashboard
+                                                   ▲
+                    reviewers tick Check / fix cells in Excel ──► Upload ──┘
 ```
 
-The website is a single page that reads one data file. There is no server and no database,
-and nothing to pay for.
+It runs on GitHub, for free, on the 1st of every month (GitHub Actions). The dashboard is a page
+on GitHub Pages that reads one data file. There's no server or database to look after.
 
 ## 2. Where everything lives
 
-| File | What it is | When you touch it |
+| File or folder | What it is | Who changes it |
 |---|---|---|
-| `roster.csv` | Every faculty member: name, department, full-time/adjunct, title, email, ORCID | Each semester (section 6) |
-| `overrides.csv` | Decisions people made during review ("that paper isn't theirs") | During monthly review (section 5) |
-| `OWNERS.md` | Who is responsible right now | At every handover |
-| `docs/index.html` | The website | Rarely: wording or design changes |
-| `docs/data/talent_pool.json` | The data the website shows. Written by the monthly job. | Never by hand |
-| `output/` | Monthly spreadsheets and `run_report.md`. Written by the monthly job. | Read only |
-| `citytech_pubs.py` | The program that does the work | Only to change the rules (section 7) |
-| `tools/build_roster.py` | Turns saved directory PDFs into `roster.csv` | Each semester |
-| `tests/` | Automatic checks that run before every update | When you change the rules |
-| `DECISIONS.md` | Why things are the way they are | Read before changing the rules |
-| `.github/workflows/` | The schedules: monthly update, tests, semester reminder | Rarely |
+| `docs/index.html` | The dashboard | Rarely, for wording or design |
+| `docs/data/CityTech_Talent_Pool.xlsx` | **The Excel deliverable** (Download button) | The monthly job |
+| `docs/data/talent_pool.json` | The data the dashboard shows | The monthly job |
+| `inbox/` | Where uploads land (Upload button); processed files move to `inbox/processed/` | Uploaders |
+| `overrides.csv` | **Every review decision** (who decided what, and why) | Written by uploads; can be edited by hand |
+| `faculty_extra.csv` | Corrections and additions to the faculty list: other names people publish under, ORCID iDs, Google Scholar details | Written by uploads; can be edited by hand |
+| `data/faculty_directory.csv` | Last copy of the directories (used if the college site is down) | The monthly job |
+| `data/item_ids.csv` | The permanent ItemIDs (CET-0014 always means the same item) | The monthly job. **Never edit.** |
+| `data/imported_items.csv` | Items added through uploads (e.g. Google Scholar collections) | Uploads |
+| `output/run_report.md` | This month's report | The monthly job |
+| `talentpool/` | The program, one file per job (see section 7) | Only to change the rules |
+| `tests/` | Automatic checks run before every update | When you change the rules |
+| `DECISIONS.md` | Why the rules are what they are | Add to it when you change a rule |
+| `OWNERS.md` | Who is responsible | At every handover |
 
 ## 3. Accounts and access
 
 | Thing | Where | Notes |
 |---|---|---|
-| The repository | GitHub | **Should belong to a GitHub organization with at least two owners**, not to one person's account. If a personal account owns it and that person leaves, the project is stranded. Move it with Settings → General → Transfer ownership. |
-| The website | Settings → Pages | Public. Serves the `/docs` folder of the `main` branch. To make it CUNY-only, see section 10. |
-| `OPENALEX_API_KEY` | Settings → Secrets and variables → Actions → Secrets | Free key from https://openalex.org/settings/api. Register it with a **shared or role email** (e.g. the department's), not a personal one. Without a key the job shares a small free daily quota and may fail. |
-| `CONTACT_EMAIL` | Same page → Variables | Sent to OpenAlex/Crossref to identify us. Use a role email. |
-| Alerts | Repository → Watch → Custom → Issues | Everyone responsible should watch issues. Failures and review requests arrive as issues. |
-
-No passwords or personal credentials are stored in the code.
+| The repository | GitHub | **Should belong to a City Tech or CUNY GitHub organization with at least two owners**, not one person. Move it with Settings → General → Transfer ownership. |
+| Who can upload | Settings → Collaborators | Uploading needs write access to the repository. Add reviewers here. |
+| The website | Settings → Pages | Public. Serves `/docs` on `main`. To make it CUNY-only, see section 10. |
+| `OPENALEX_API_KEY` | Settings → Secrets and variables → Actions → Secrets | Free key from https://openalex.org/settings/api, registered to a **role email**. Without one, the job shares a small daily quota and may fail. |
+| `CONTACT_EMAIL` | Same page → Variables | Sent to the data sources to identify us. Use a role email. |
+| Alerts | Repository → Watch → Custom → Issues | Everyone responsible should watch issues. Failures and monthly reviews arrive as issues. |
 
 ## 4. What happens automatically
 
 | When | What | What you'll see |
 |---|---|---|
-| 1st of each month, 7am New York | Monthly update (`monthly.yml`) | A new commit "Monthly update …". If anything changed, an issue **"Talent pool review: Month Year"** |
-| If the update fails | Same job | An issue **"Monthly update failed"**. Last month's data stays live. |
-| Jan 20 and Aug 20 | Reminder (`reminders.yml`) | An issue **"Semester checklist: refresh the roster"** |
-| Every change to the code | Tests (`tests.yml`) | A green check or red cross next to the commit |
+| 1st of each month, 7am New York | Monthly update (`monthly.yml`) | A commit "Monthly update …". If anything changed, an issue **"Talent pool review: Month Year"** |
+| Whenever a file is uploaded to `inbox/` | `uploads.yml` applies it, then reruns the update | A commit "Apply upload from …", then the dashboard refreshes within ~5 minutes |
+| If anything fails | Same jobs | An issue **"Monthly update failed"** or **"Upload could not be processed"**. The live data is never overwritten by a broken run. |
+| Jan 20 and Aug 20 | `reminders.yml` | An issue **"Semester checklist"** |
+| Every code change | Tests (`tests.yml`) | Green check or red cross next to the commit |
 
-To run the update now: **Actions → Monthly AI talent pool update → Run workflow.**
+Run the update now: **Actions → Monthly AI talent pool update → Run workflow.**
 
 ## 5. Monthly review (about 15 minutes)
 
-Open the "Talent pool review" issue. It lists what changed since last month. For each item:
+Open the "Talent pool review" issue. It lists what changed: people newly in the AI talent pool,
+tier changes, new or departed faculty, warnings, and how many items need checking.
 
-**New in the talent pool, "not on roster".** Someone publishes with a City Tech affiliation
-but isn't in `roster.csv`. Look them up in the City Tech directory.
-- Current faculty: add them to `roster.csv` (or wait for the semester roster refresh) and
-  meanwhile record their department in `overrides.csv` (`department` row).
-- Student, visitor or former faculty: add a `hide` row.
+**Check items in Excel. This is the main review tool:**
+1. On the dashboard, click **Download Excel**.
+2. **Items To Check** tab: papers on an author profile with the same name but no City Tech
+   affiliation. In the yellow **Check** column pick **Confirmed** (it's theirs) or **Not theirs**.
+3. Anywhere: fix a wrong **ItemType, ItemTitle, Year, Venue / Funder, Role or Amount** by typing
+   over the cell. Use **Not AI** / **Is AI** in Check to correct the AI flag.
+4. **Missing item?** Add a row at the bottom of **Items**. Leave ItemID empty and fill in FullName,
+   Email, ItemType, ItemTitle, Year and Sources.
+5. Put your name in **Reviewed by**, save, then click **Upload** on the dashboard → drag the file
+   in → **Commit changes**.
 
-**Needs review.** Their AI papers sit on their OpenAlex profile but none lists City Tech,
-usually because OpenAlex merged several people who share a name. Open their entry on the website and
-read the unverified papers.
-- None are theirs: `not_theirs, <name>, *unverified*`
-- Some are theirs: a `confirm_theirs` row for each paper that is.
+The upload becomes rows in `overrides.csv` (one per decision, with your name and the date) and
+is applied at every future run. Don't rename or reorder columns, and don't change ItemIDs.
 
-**Tier changes / no longer listed.** Usually fine (new papers, or papers aging out of the
-3-year window). Check anything surprising.
+**Single corrections from anyone:** the dashboard's **Edit** link opens a pre-filled GitHub issue.
+Apply it by ticking the item in Excel and uploading, or by adding a row to `overrides.csv`, then close the issue.
 
-**Warnings: "overrides.csv line N matched nothing".** A paper or person in a decision row
-no longer appears. Usually harmless; delete the row if it's obsolete.
+### overrides.csv by hand
 
-Then close the issue.
+| action | person | item | field | value | meaning |
+|---|---|---|---|---|---|
+| `confirm` | | CET-0014 | | | It's theirs and correct |
+| `not_theirs` | name | CET-0014, or `*unverified*` | | | Someone else's (`*unverified*` = all their to-check items) |
+| `not_ai` / `is_ai` | | CET-0014 | | | Fix the AI flag |
+| `set` | | CET-0014 | ItemType | Conference paper | Correct a field |
+| `department` | name | | | department | Correct someone's department |
+| `hide` | name | | | reason | Remove a person from the site |
 
-### Recording a decision in overrides.csv
-
-On GitHub, open `overrides.csv` → pencil icon → add a line → **Commit changes**.
-Decisions take effect at the next monthly run (or run it now, section 4).
-
-| action | person | paper | value | meaning |
-|---|---|---|---|---|
-| `not_ai` | name | paper | | Paper isn't really about AI |
-| `is_ai` | name | paper | | Paper is about AI but wasn't detected |
-| `not_theirs` | name | paper, or `*unverified*` | | Paper belongs to someone else with the same name |
-| `confirm_theirs` | name | paper | | Unverified paper is theirs; it now counts |
-| `department` | name | | department | Set the department of someone not on the roster |
-| `hide` | name | | reason | Remove the person from the site |
-
-`paper` can be the OpenAlex ID (the `W…` number at the end of the paper's OpenAlex link),
-the DOI, or the exact title. Always fill in `reviewed_by`, `date` and `note`, so the next
-maintainer knows who decided and why.
+Always fill in `reviewed_by`, `date` and `note`.
 
 ## 6. Every semester (about an hour)
 
-Faculty join and leave, so the roster goes stale. The reminder issue has this checklist.
-
-1. For each department, open its City Tech directory page and print it to PDF from the
-   browser: once on the **Full-Time Faculty** tab, once on the **Adjunct Faculty** tab.
-   Put all the PDFs in one folder.
-2. Rebuild the roster. This step needs Python on a computer (or ask someone who has it):
-   ```
-   pip install -r tools/requirements.txt
-   python tools/build_roster.py path/to/pdf-folder
-   ```
-   It prints how many people it found per department and flags anyone without an email.
-3. Compare with the old roster (GitHub shows the differences when you commit). Large drops
-   usually mean a PDF is missing. Carry over the `aka` and `orcid` columns from the old file
-   for people who are still there.
-4. Commit the new `roster.csv` and run the update.
-
-**Departments to include:** every department in the Schools of Arts & Sciences, Technology &
-Design, and Professional Studies. The technology and engineering departments matter most
-for AI. If they're missing, most AI experts show up only as "not on roster".
-
-**ORCID iDs** (a column in `roster.csv`) are the biggest single accuracy improvement: they
-tie a person to their papers without guessing from names. Add them whenever you learn one.
+**The faculty list updates itself.** Each month the job reads every department's directory on
+citytech.cuny.edu, so new hires appear and departures drop off automatically. The semester
+checklist issue covers what's left:
+- Work through the **Items To Check** tab (section 5).
+- Skim the report's warnings, e.g. a department whose directory couldn't be read.
+- If someone publishes under another name, add it in `faculty_extra.csv` (`aka` column).
+  If you know their **ORCID iD**, add it too. That's the biggest single accuracy improvement.
+- **Google Scholar** can't be read automatically (no API, and it blocks automated access). To include
+  Scholar items, fill a workbook in the CUNY template (the format of the Download) and upload it.
+  Duplicates merge automatically.
 
 ## 7. Changing the rules
 
-Read `DECISIONS.md` first; most rules exist because of a real mistake they prevent.
+Read `DECISIONS.md` first. Most rules exist because of a real mistake they prevent.
 
-| To change | Edit | Where |
+The program, `talentpool/`, has one file per job:
+
+| File | Job | Change it to… |
 |---|---|---|
-| Tier thresholds | `TIERS`, `RECENT_YEARS` | `citytech_pubs.py`, "AI expertise" section |
-| AI words and phrases | `AI_TERMS` | same |
-| Which OpenAlex topics count | `AI_TOPIC_RE`, `NOT_AI_TOPIC_RE` | same |
-| Who appears when not on roster | `UNROSTERED_MIN_PUBS`, `UNROSTERED_MAX_GAP` | same |
-| Safety-check sensitivity | `GUARD_MIN_WORKS_RATIO`, `GUARD_MIN_PEOPLE_RATIO` | "safety checks" section |
-| Website wording or look | text in `docs/index.html` | |
+| `directory.py` | Faculty list from the directories | Add a department (`DEPARTMENTS`) or adjust how titles map to full-time / adjunct / staff |
+| `sources.py` | Fetch items from each source | Add a source, or adjust how bios are read |
+| `items.py` | Merge, type, confidence, ItemIDs | Change type names (`ITEM_TYPES`) or confidence rules |
+| `ai.py` | AI flag and tiers | Tier thresholds (`TIERS`), AI words (`AI_TERMS`), topic rules |
+| `review.py` | overrides.csv, safety checks, report | Safety-check thresholds (`GUARD_…`) |
+| `workbook.py` | The Excel file | Columns (keep the CUNY template's columns first and in order) |
+| `inbox.py` | Uploads | Accepted file formats |
+| `run.py` | Runs everything in order | Rarely |
 
-After a change, the Tests workflow runs automatically. A red cross means the change broke
-one of the known cases in `tests/test_classifier.py`; read the failure, then either fix the
-change or, if the old behavior was wrong, update the test and say why in `DECISIONS.md`.
+After a change, the Tests workflow runs. A red cross means the change broke a known case. Read the
+failure, then fix the change, or update the test and record why in `DECISIONS.md`.
 
-To try it on your own computer:
+On your own computer:
 ```
 pip install -r requirements-dev.txt
-python -m pytest -q tests          # about a second, no internet needed
-python citytech_pubs.py --roster roster.csv --full-career --site-data docs/data/talent_pool.json
+python -m pytest -q tests        # about 2 seconds, no internet needed
+python -m talentpool             # a real update (needs internet)
+python -m talentpool.inbox       # apply files in inbox/
 ```
 
 ## 8. Troubleshooting
 
 | What you see | Likely cause | What to do |
 |---|---|---|
-| Issue "Monthly update failed", report says **REFUSED** | The safety check saw a big drop (papers or people) | Read the report. If OpenAlex had an outage, rerun later. If the drop is real (e.g. a smaller roster), run the workflow with **force** ticked. |
-| Failure at "Run tests first" | Someone changed the code and broke a rule | Open the run log, read the failing test, fix or revert the last change |
-| Report warns "failed requests to api.openalex.org", or HTTP 429 | Daily quota used up | Add or renew `OPENALEX_API_KEY` (section 3), then rerun |
-| No update happened at all this month | GitHub turns off schedules in public repositories after 60 days with no activity | Actions → Monthly AI talent pool update → **Enable workflow**. (The monthly commit normally prevents this.) |
-| Failure at "Save results", push rejected | Someone edited files while the job ran | Rerun the workflow |
-| Website says the data didn't load | Pages not set up, or the data file is missing | Settings → Pages must serve `main` / `/docs`; run the update once |
-| Website didn't change after a run | Pages caches for a few minutes | Wait 10 minutes, hard-refresh |
-| A known AI expert is missing | Not on the roster, no City Tech affiliation on papers, or a name mismatch | Check `output/faculty_coverage.csv`. Add their ORCID, or an `aka` name, in `roster.csv` |
-| Someone got another person's papers | Same-name confusion | Use `not_theirs` in `overrides.csv` |
-| An OpenAlex error mentions an API key | OpenAlex changed its access rules | Get a key (section 3). Check https://docs.openalex.org for current rules |
+| "Monthly update failed", report says **REFUSED** | The safety check saw a big drop (faculty, items or directories) | Read the problems listed. If a source had an outage, rerun later. If the drop is real, run the workflow with **force** ticked. |
+| Report warns a department's directory "unavailable" | The college site was down or that page moved | Last month's copy was used. If it persists, check the department's page address in `directory.py`. |
+| "Upload could not be processed" | The file isn't our workbook or the CUNY template, or columns were renamed | Fix the file and upload again; the failed file stays in `inbox/` (delete it on GitHub if replacing) |
+| Failure at "Run tests first" | A code change broke a rule | Open the run log, read the failing test, fix or revert |
+| "failed requests to api.openalex.org", HTTP 429 | Daily quota used up | Add or renew `OPENALEX_API_KEY` (section 3) |
+| No update this month | GitHub disables schedules in public repos after 60 days without activity | Actions → Monthly AI talent pool update → **Enable workflow** (the monthly commit normally prevents this) |
+| Dashboard didn't change after an upload | Pages caches for a few minutes, or the rebuild is still running | Check Actions; wait 10 minutes; hard-refresh |
+| A known expert is missing | Not full-time in the directory, a name mismatch, or papers without City Tech affiliation | Add their ORCID or `aka` in `faculty_extra.csv`; confirm items in Items To Check |
+| Someone got another person's papers | Same-name confusion | **Not theirs** in Excel, or `not_theirs` in `overrides.csv` |
 
 ## 9. Handover checklist
 
 **Outgoing maintainer**
-- [ ] Repository owned by an organization, with the incoming person (and a backup) as owners
-- [ ] `OPENALEX_API_KEY` registered to a role email; incoming person knows how to log in or make a new one
+- [ ] Repository owned by an organization, incoming person (and a backup) as owners
+- [ ] `OPENALEX_API_KEY` registered to a role email; incoming person can log in or make a new one
 - [ ] `CONTACT_EMAIL` set to a role email
+- [ ] Reviewers added as collaborators
 - [ ] `OWNERS.md` updated
 - [ ] Open issues reviewed or explained
-- [ ] A 30-minute walkthrough: one monthly review together, using this file
+- [ ] 30-minute walkthrough: one monthly review together using this file
 
 **Incoming maintainer**
 - [ ] Watch the repository (Watch → Custom → Issues)
-- [ ] Run the update once yourself (section 4). That re-confirms the schedule and shows you a report.
+- [ ] Run the update once yourself (section 4)
+- [ ] Download the Excel, tick one item, upload it, and see it applied
 - [ ] Read `DECISIONS.md`
-- [ ] Put the semester reminder dates in your calendar too
 
 ## 10. Making the site CUNY-only (Cloudflare)
 
@@ -208,3 +196,5 @@ CUNY staff should see it, move it to Cloudflare, which is free at this size:
 4. Test in a private browser window: you should be asked for your email and sent a code.
 
 The free Zero Trust plan covers up to 50 people. Record the Cloudflare account owner in OWNERS.md.
+Note: with a private repository, the Upload button still works for collaborators, and the dashboard's
+Edit links need viewers to have repository access.

@@ -1,8 +1,9 @@
-action,person,paper,value,reviewed_by,date,note
-# Review decisions. Each row survives every monthly rebuild. Lines starting with # are ignored.,,,,
-# Actions: not_ai | is_ai | not_theirs | confirm_theirs | department | hide. See MAINTAINING.md.,,,,
-# paper = an OpenAlex work ID (W1234...) or a DOI or the exact title. *unverified* = all unverified papers.,,,,
-# Examples (remove the # to use):,,,,
-# not_theirs,Lin Zhou,*unverified*,,your name,2026-10-21,Profile merges other researchers named Lin Zhou
-# department,Fangyang Shen,,Computer Systems Technology,your name,2026-10-21,Confirmed on CST directory
-# hide,Some Student,,student co-author,your name,2026-10-21
+action,person,item,field,value,reviewed_by,date,note
+# Review decisions. Each row survives every monthly rebuild. Lines starting with # are ignored.,,,,,,,
+# Usually written for you when you upload the Excel with the Check column filled in.,,,,,,,
+# Actions: confirm | not_theirs | not_ai | is_ai | set | department | hide. See MAINTAINING.md section 5.,,,,,,,
+# item = an ItemID like CET-0014 (or an OpenAlex W-number / DOI / exact title). *unverified* = all to-check items.,,,,,,,
+# Examples (remove the # to use):,,,,,,,
+# not_theirs,Lin Zhou,*unverified*,,,your name,2026-10-28,Profile merges other researchers named Lin Zhou
+# set,,CET-0014,ItemType,Conference paper,your name,2026-10-28,Published in conference proceedings
+# hide,Some Person,,,left City Tech in 2025,your name,2026-10-28,
