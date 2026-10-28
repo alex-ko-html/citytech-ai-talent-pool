@@ -13,7 +13,7 @@ import json
 import os
 import sys
 import time
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
 from . import sources as S
@@ -57,6 +57,31 @@ def source_rows(stats, dept_status, skipped):
          f"{stats.get('imported_items', 0)} items added from uploaded workbooks (including Scholar collections)",
          "Via uploads"),
     ]
+
+
+# Earlier-career papers from OpenAlex author profiles that don't list City Tech ("Low").
+# Only AI-related ones are worth a person's time (this is an AI talent pool), and a profile with
+# hundreds of them almost certainly merges several people who share a name.
+MERGED_PROFILE_LIMIT = 150
+
+
+def limit_unconfirmed(items, roster):
+    low = defaultdict(list)
+    for it in items:
+        if it["confidence"].startswith("Low") and it["sources"] == ["OpenAlex"] and not it.get("review"):
+            low[it["person"]].append(it)
+    drop, notes = set(), []
+    for key, lst in low.items():
+        if len(lst) > MERGED_PROFILE_LIMIT:
+            drop.update(id(i) for i in lst)
+            notes.append(f"{roster.by_key[key]['full_name']}: OpenAlex profile has {len(lst)} papers without City Tech "
+                         f"affiliation, probably several people with this name; set aside. Adding their ORCID iD "
+                         f"(faculty_extra.csv) fixes this.")
+        else:
+            drop.update(id(i) for i in lst if not i.get("is_ai"))
+    S.STATS["unconfirmed_set_aside"] = len(drop)
+    S.STATS["merged_profiles"] = notes
+    return [i for i in items if id(i) not in drop], notes
 
 
 def build_payload(people, faculty, items, tiers, stats, dept_status, generated):
@@ -151,6 +176,7 @@ def main(argv=None):
     apply_item_overrides(items, overrides, roster.by_key, is_confirmed)
     for it in items:
         it["confidence"] = set_confidence(it)
+    items, set_aside = limit_unconfirmed(items, roster)
     tiers = tier_people(faculty, items, is_confirmed)
 
     # 6. safety checks

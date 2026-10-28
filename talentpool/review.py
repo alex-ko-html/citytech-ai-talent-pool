@@ -130,6 +130,8 @@ def check_and_report(payload, previous, overrides, dept_status, stats, force=Fal
     for name, msg, st in dept_status:
         if st != "Used":
             warnings.append(f"Directory, {name}: {msg}.")
+    for note in stats.get("merged_profiles", []):
+        warnings.append(note)
     for host, n in sorted(REQUEST_FAILURES.items()):
         warnings.append(f"{n} failed requests to {host}.")
     for o in overrides:
@@ -148,10 +150,11 @@ def check_and_report(payload, previous, overrides, dept_status, stats, force=Fal
     left = [b["name"] for k, b in before.items() if k not in {p["key"] for p in payload["faculty"]}]
     rep = {
         "date": time.strftime("%Y-%m-%d"), "status": "REFUSED" if problems and not force else "OK",
-        "problems": problems, "warnings": warnings, "stats": s, "source_stats": dict(stats),
+        "problems": problems, "warnings": warnings, "stats": s,
         "new_ai_people": new_tier, "tier_changes": changed, "new_faculty": new_faculty, "left_directory": left,
         "items_to_check": s.get("items_to_check", 0),
         "attention": bool(problems or new_tier or changed or warnings or new_faculty or left),
+        "source_stats": {k: v for k, v in stats.items() if k != "merged_profiles"},
     }
     return (not problems or force), rep
 
@@ -169,7 +172,9 @@ def report_markdown(rep):
           "- By source: " + ", ".join(f"{k} {v}" for k, v in s["by_source"].items()),
           f"- AI-related items: {s['ai_items']} · people with a tier: {s['ai_people']}",
           f"- OpenAlex City Tech papers scanned: {ss.get('openalex_citytech_works', 0)} · NSF awards: {ss.get('nsf_awards', 0)} · "
-          f"NIH projects: {ss.get('nih_projects', 0)} · bio items: {ss.get('bio_items', 0)}", ""]
+          f"NIH projects: {ss.get('nih_projects', 0)} · bio items: {ss.get('bio_items', 0)}",
+          f"- Earlier-career papers set aside (not AI-related, or from merged same-name profiles): "
+          f"{ss.get('unconfirmed_set_aside', 0)}", ""]
     def sec(t, xs, f=str):
         if xs:
             L.extend([f"## {t}", *[f"- {f(x)}" for x in xs], ""])

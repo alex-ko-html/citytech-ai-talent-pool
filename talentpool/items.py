@@ -25,16 +25,24 @@ HIGH_SOURCES = {"CUNY Academic Works": "in CUNY Academic Works", "ORCID": "on th
                 "NSF": "NSF award to City Tech", "NIH": "NIH award to City Tech"}
 
 
+CONFERENCE_VENUE = re.compile(r"\bproceedings?\b|\bconference\b|\bsymposium\b|\bworkshop\b|\bexposition\b|"
+                              r"\bcongress\b|\bmeeting\b|\bSPIE\b|\bIEEE\b.*\b(conf|symp)", re.I)
+
+
+def _by_venue(st, venue):
+    if st == "conference" or CONFERENCE_VENUE.search(venue or ""):
+        return "Conference paper"
+    if st == "journal":
+        return "Journal article"
+    return "Paper (venue type unclear)"
+
+
 def type_from_openalex(work_type, source_type="", venue=""):
     t, st = (work_type or "").lower(), (source_type or "").lower()
     if t in NOT_RESEARCH:
         return None
-    if t == "article":
-        if st == "conference" or re.search(r"\bproceedings?\b|\bconference\b|\bsymposium\b|\bworkshop\b", venue or "", re.I):
-            return "Conference paper"
-        if st == "journal":
-            return "Journal article"
-        return "Paper (venue type unclear)"
+    if t in ("article", "other", ""):            # OpenAlex files many proceedings papers as "other"
+        return _by_venue(st, venue)
     return {"book-chapter": "Book chapter", "book": "Book", "monograph": "Book", "report": "Technical report",
             "preprint": "Preprint", "dataset": "Dataset", "dissertation": "Dissertation",
             "review": "Journal article", "letter": "Journal article", "editorial": "Other",

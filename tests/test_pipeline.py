@@ -165,3 +165,17 @@ def test_workbook_keeps_the_template_columns(tmp_path):
     assert wb.sheetnames[:3] == ["Items", "Faculty", "Sources"] and "Items Excluded" in wb.sheetnames
     for sheet, want in TEMPLATE.items():
         assert [c.value for c in wb[sheet][1]][:len(want)] == want, sheet
+
+
+def test_items_to_check_stay_manageable(tmp_path):
+    ct, other = fakes.default_works()
+    other.append(fakes.work(40, "Soil chemistry of rice paddies", 2019, [fakes.author("Lin Zhou", "A5", False)]))
+    p, _ = harness.run(tmp_path, ct=ct, other=other)
+    titles = {i["title"] for i in p["items"]}
+    assert "Soil chemistry of rice paddies" not in titles                    # not AI-related: not worth checking
+    assert "YOLO bridge inspection with computer vision" in titles           # AI-related: to check
+    many = [fakes.work(1000 + k, f"Deep learning study {k}", 2020, [fakes.author("Lin Zhou", "A5", False)]) for k in range(160)]
+    p, rep = harness.run(tmp_path, ct=ct, other=other + many)
+    lin = [i for i in p["items"] if p["faculty"][i["p"]]["name"] == "Lin Zhou"]
+    assert all(i["ok"] for i in lin)                                         # merged profile set aside entirely
+    assert any("probably several people" in w for w in rep["warnings"])
