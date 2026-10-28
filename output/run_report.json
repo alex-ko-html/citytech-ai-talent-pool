@@ -1,169 +1,362 @@
 {
- "date": "2026-10-26",
+ "date": "2026-10-28",
  "status": "OK",
  "problems": [],
- "warnings": [],
- "stats": {
-  "roster_faculty": 174,
-  "faculty_with_publications": 127,
-  "citytech_works": 3130,
-  "ai_publications": 193,
-  "people": 53
- },
- "tiers": {
-  "Core AI expert": 8,
-  "Active in AI": 10,
-  "Some AI work": 31,
-  "Needs review": 4
- },
- "records_by_source": {
-  "OpenAlex": 6848,
-  "CUNY Academic Works": 482
- },
- "new_people": [],
- "removed_people": [
-  [
-   "Alberto Martinez",
-   "Active in AI"
-  ],
-  [
-   "Johnny Guevara",
-   "Active in AI"
-  ],
-  [
-   "German Kolmakov",
-   "Some AI work"
-  ],
-  [
-   "Christopher Blair",
-   "Some AI work"
-  ],
-  [
-   "Abdou Rachid Bah",
-   "Some AI work"
-  ],
-  [
-   "Akm Samsur Rahman",
-   "Some AI work"
-  ],
-  [
-   "Carlos J. Pav\u00f3n\u2010V\u00e1zquez",
-   "Some AI work"
-  ],
-  [
-   "David B. Smith",
-   "Some AI work"
-  ],
-  [
-   "Farrukh Zia",
-   "Some AI work"
-  ],
-  [
-   "Jihun Kim",
-   "Some AI work"
-  ],
-  [
-   "Mercer R. Brugler",
-   "Some AI work"
-  ],
-  [
-   "Nandi Prince",
-   "Some AI work"
-  ],
-  [
-   "Xu Chen",
-   "Some AI work"
-  ],
-  [
-   "Jason Ellis",
-   "Some AI work"
-  ],
-  [
-   "Unurjargal Nyambuu",
-   "Some AI work"
-  ],
-  [
-   "Shanghuan Chiu",
-   "Needs review"
-  ]
+ "warnings": [
+  "Directory, Architectural Technology: directory unavailable and no saved copy.",
+  "Directory, Health Sciences: directory unavailable and no saved copy."
  ],
- "tier_changes": [
+ "stats": {
+  "faculty": 368,
+  "departments": 26,
+  "items": 5413,
+  "items_to_check": 9243,
+  "items_excluded": 386,
+  "by_type": {
+   "Journal article": 2028,
+   "Other": 854,
+   "Paper (venue type unclear)": 676,
+   "Conference presentation": 453,
+   "Book chapter": 405,
+   "Book": 380,
+   "Grant": 329,
+   "Conference paper": 143,
+   "Preprint": 70,
+   "Open educational resource": 45,
+   "Technical report": 15,
+   "Patent": 7,
+   "Dissertation": 5,
+   "Dataset": 3
+  },
+  "by_source": {
+   "OpenAlex": 2969,
+   "Dept bio": 2919,
+   "CUNY Academic Works": 1069,
+   "NSF": 109,
+   "NIH": 5
+  },
+  "ai_items": 154,
+  "ai_people": 55,
+  "citytech_works": 3155
+ },
+ "source_stats": {
+  "openalex_citytech_works": 3155,
+  "openalex_items": 12963,
+  "academic_works_records": 2049,
+  "academic_works_items": 1083,
+  "orcid_items": 0,
+  "nsf_awards": 75,
+  "nsf_items": 110,
+  "nih_projects": 8,
+  "nih_items": 5,
+  "bio_items": 3117,
+  "imported_items": 0
+ },
+ "new_ai_people": [
   [
-   "Li Geng",
-   "Core AI expert",
-   "Active in AI"
+   "Evgenia Giannopoulou",
+   "Some AI work",
+   "Biological Sciences"
+  ],
+  [
+   "Laina Karthikeyan",
+   "Some AI work",
+   "Biological Sciences"
   ],
   [
    "Mai Zahran",
-   "Active in AI",
-   "Some AI work"
+   "Some AI work",
+   "Biological Sciences"
   ],
   [
-   "H. Norouzi",
-   "Active in AI",
-   "Some AI work"
+   "Joseph Franklin",
+   "Some AI work",
+   "English"
   ],
   [
-   "Reginald Blake",
+   "George Guida",
+   "Needs review",
+   "English"
+  ],
+  [
+   "Vivian Papp",
+   "Some AI work",
+   "English"
+  ],
+  [
+   "Daniel Ryan",
+   "Some AI work",
+   "English"
+  ],
+  [
+   "Sean Scanlan",
    "Active in AI",
-   "Some AI work"
+   "English"
+  ],
+  [
+   "Jennifer Sears",
+   "Some AI work",
+   "English"
+  ],
+  [
+   "Sandra Cheng",
+   "Some AI work",
+   "Humanities"
+  ],
+  [
+   "David Sanchez Jimenez",
+   "Needs review",
+   "Humanities"
+  ],
+  [
+   "Christopher Swift",
+   "Some AI work",
+   "Humanities"
+  ],
+  [
+   "Zheng Zhu",
+   "Needs review",
+   "Humanities"
+  ],
+  [
+   "Boyan Kostadinov",
+   "Some AI work",
+   "Mathematics"
+  ],
+  [
+   "Nan Li",
+   "Some AI work",
+   "Mathematics"
+  ],
+  [
+   "Ariane Masuda",
+   "Some AI work",
+   "Mathematics"
+  ],
+  [
+   "Satyanand Singh",
+   "Some AI work",
+   "Mathematics"
+  ],
+  [
+   "Lin Zhou",
+   "Needs review",
+   "Mathematics"
+  ],
+  [
+   "Viviana Acquaviva",
+   "Core AI expert",
+   "Physics"
+  ],
+  [
+   "German Kolmakov",
+   "Some AI work",
+   "Physics"
+  ],
+  [
+   "Ari Maller",
+   "Some AI work",
+   "Physics"
+  ],
+  [
+   "Robert MacDougall",
+   "Some AI work",
+   "Social Science"
+  ],
+  [
+   "Aparicio Carranza",
+   "Core AI expert",
+   "Computer Engineering Technology"
+  ],
+  [
+   "Sunghoon Jang",
+   "Some AI work",
+   "Computer Engineering Technology"
+  ],
+  [
+   "Yang Kim",
+   "Core AI expert",
+   "Computer Engineering Technology"
+  ],
+  [
+   "Ohbong Kwon",
+   "Some AI work",
+   "Computer Engineering Technology"
+  ],
+  [
+   "Xiaohai Li",
+   "Active in AI",
+   "Computer Engineering Technology"
+  ],
+  [
+   "Lili Ma",
+   "Core AI expert",
+   "Computer Engineering Technology"
+  ],
+  [
+   "Benito Mendoza",
+   "Core AI expert",
+   "Computer Engineering Technology"
+  ],
+  [
+   "Yu Wang",
+   "Core AI expert",
+   "Computer Engineering Technology"
+  ],
+  [
+   "Chen Xu",
+   "Active in AI",
+   "Computer Engineering Technology"
+  ],
+  [
+   "Candido Cabo",
+   "Some AI work",
+   "Computer Systems Technology"
+  ],
+  [
+   "Yu-Wen Chen",
+   "Core AI expert",
+   "Computer Systems Technology"
+  ],
+  [
+   "Elena Filatova",
+   "Active in AI",
+   "Computer Systems Technology"
+  ],
+  [
+   "Janusz Kusyk",
+   "Some AI work",
+   "Computer Systems Technology"
+  ],
+  [
+   "Xiangdong Li",
+   "Active in AI",
+   "Computer Systems Technology"
+  ],
+  [
+   "Elizabeth Milonas",
+   "Active in AI",
+   "Computer Systems Technology"
+  ],
+  [
+   "Marcos Pinto",
+   "Some AI work",
+   "Computer Systems Technology"
+  ],
+  [
+   "Ashwin Satyanarayana",
+   "Core AI expert",
+   "Computer Systems Technology"
+  ],
+  [
+   "Fangyang Shen",
+   "Core AI expert",
+   "Computer Systems Technology"
+  ],
+  [
+   "Marzieh Azarderakhsh",
+   "Some AI work",
+   "Construction Management and Civil Engineering Technology"
+  ],
+  [
+   "Hamidreza Norouzi",
+   "Active in AI",
+   "Construction Management and Civil Engineering Technology"
+  ],
+  [
+   "Li Geng",
+   "Active in AI",
+   "Electrical and Telecommunications Engineering Technology"
+  ],
+  [
+   "Ahmed Hassebo",
+   "Some AI work",
+   "Electrical and Telecommunications Engineering Technology"
+  ],
+  [
+   "Asm Hossain",
+   "Needs review",
+   "Electrical and Telecommunications Engineering Technology"
+  ],
+  [
+   "Xinzhou Wei",
+   "Some AI work",
+   "Electrical and Telecommunications Engineering Technology"
+  ],
+  [
+   "David Smith",
+   "Active in AI",
+   "Entertainment Technology"
+  ],
+  [
+   "Gaffar Gailani",
+   "Some AI work",
+   "Mechanical Engineering Technology"
+  ],
+  [
+   "Kazi Imran",
+   "Some AI work",
+   "Mechanical Engineering Technology"
+  ],
+  [
+   "Samsur Rahman",
+   "Some AI work",
+   "Mechanical Engineering Technology"
+  ],
+  [
+   "Andy Zhang",
+   "Active in AI",
+   "Mechanical Engineering Technology"
+  ],
+  [
+   "Alyssa Adomaitis",
+   "Some AI work",
+   "Business"
+  ],
+  [
+   "Raaghav Pandya",
+   "Some AI work",
+   "Career and Technology Teacher Education"
+  ],
+  [
+   "Euisuk Sung",
+   "Some AI work",
+   "Career and Technology Teacher Education"
+  ],
+  [
+   "Mery Diaz",
+   "Active in AI",
+   "Human Services"
+  ],
+  [
+   "Eun Jeong Lee",
+   "Some AI work",
+   "Human Services"
+  ],
+  [
+   "Karen Goodlad",
+   "Some AI work",
+   "Hospitality Management"
+  ],
+  [
+   "Marissa Moran",
+   "Some AI work",
+   "Law and Paralegal Studies"
+  ],
+  [
+   "Margaret Rafferty",
+   "Some AI work",
+   "Nursing"
+  ],
+  [
+   "Monica Berger",
+   "Some AI work",
+   "Library"
   ]
  ],
- "needs_review": [
-  "Lin Zhou",
-  "George Guida",
-  "David Sanchez Jimenez",
-  "Zheng Zhu"
- ],
- "new_not_on_roster": [],
- "roster_without_publications": [
-  "Abiola Olatunde",
-  "Agnes Zana",
-  "Alba Rossi-George",
-  "Andleeb Zameer",
-  "Andrew Vaughn",
-  "Ann Delilkan",
-  "Beverly Lapuma",
-  "Bruce Kan",
-  "Carrie Hall",
-  "Debarati Biswas",
-  "Dionne Bennett",
-  "Dominick Desantis",
-  "Dua Ahmed",
-  "Duval Bodden Jr.",
-  "Emilio Minichiello Epstein",
-  "Erez Shochat",
-  "Ezra Halleck",
-  "F. Patricia Medina",
-  "Grazyna Niezgoda",
-  "Gulgun Bayaz",
-  "Honamattie R. Dabydeen",
-  "Hyunjoo Do",
-  "Jaclyn P. Griffith",
-  "Jeffrey Kroll",
-  "Joel Greenstein",
-  "John Lonie",
-  "Julian Williams",
-  "Kate Falvey",
-  "Kayla Davie",
-  "Khalid Lachheb",
-  "Leigh Gold",
-  "Maria Pagano",
-  "Marie Parnes",
-  "Michael McAuliffe",
-  "Monique Ferrell",
-  "Reneta D. Lansiquot-Panagiotakis",
-  "Robert Macdougall",
-  "Roriann Smith",
-  "Samar El Hitti",
-  "Scott D. Dahlie",
-  "Steven Bear",
-  "Suela Aalsberg",
-  "Suresh Tewani",
-  "Vitaliy Dorogan",
-  "William Colucci",
-  "Yousoon Baek",
-  "Zhijian Qian"
- ],
+ "tier_changes": [],
+ "new_faculty": [],
+ "left_directory": [],
+ "items_to_check": 9243,
  "attention": true
 }
