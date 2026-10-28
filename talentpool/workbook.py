@@ -168,7 +168,7 @@ def write_workbook(path, people, items, tiers, source_rows, generated):
     how = wb.create_sheet("How to use")
     how.column_dimensions["A"].width = 110
     lines = [
-        ("City Tech AI Talent Pool: publication data", True),
+        ("CUNY Talent Pool: City Tech publication data", True),
         (f"Generated {generated} by the monthly update. Do not reorder or rename columns.", False),
         ("", False),
         ("Tabs", True),

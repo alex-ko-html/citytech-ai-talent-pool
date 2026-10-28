@@ -1,4 +1,4 @@
-# City Tech AI Talent Pool
+# CUNY Talent Pool (City Tech)
 
 Who at City Tech works in artificial intelligence, and the publications, presentations, grants
 and patents that show it. Rebuilt automatically on the 1st of every month. No AI model is used.

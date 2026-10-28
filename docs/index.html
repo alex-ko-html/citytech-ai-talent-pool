@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>City Tech AI Talent Pool</title>
+<title>CUNY Talent Pool</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -73,9 +73,9 @@ td .sub{display:block;font-size:12px;color:var(--ink-3);margin-top:2px}
 .src{display:flex;flex-wrap:wrap;gap:4px}
 .chip{font-size:11.5px;line-height:1;padding:4px 7px;border-radius:999px;background:var(--some-soft);color:var(--ink-2);white-space:nowrap}
 .chip.ai{background:var(--accent-soft);color:var(--accent)}
-.chk{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;font-size:13px;font-weight:700}
+.chk{vertical-align:middle;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;font-size:13px;font-weight:700}
 .chk.rev{background:var(--ok);color:var(--panel)}
-.chk.ok{background:var(--ok-soft);color:var(--ok)}
+.chk.ok{background:transparent;border:2px solid var(--line-2);color:transparent}
 .chk.no{background:var(--warn-soft);color:var(--warn)}
 .edit{font-size:12.5px;white-space:nowrap}
 tr.tocheck td{background:color-mix(in srgb,var(--panel) 85%,var(--warn-soft))}
@@ -96,7 +96,7 @@ footer{color:var(--ink-3);font-size:12.5px} footer .wrap{padding-block:0 40px}
 <body>
 <header><div class="wrap">
   <div class="top">
-    <div><div class="eyebrow">New York City College of Technology · CUNY</div><h1>City Tech AI Talent Pool</h1></div>
+    <div><div class="eyebrow">New York City College of Technology · CUNY</div><h1>CUNY Talent Pool</h1></div>
     <div class="actions">
       <a class="btn primary" id="dl" href="data/CityTech_Talent_Pool.xlsx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 21h14"/></svg>Download Excel</a>
       <a class="btn" id="up" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9m0 0-4 4m4-4 4 4M5 3h14"/></svg>Upload</a>
@@ -104,13 +104,14 @@ footer{color:var(--ink-3);font-size:12.5px} footer .wrap{padding-block:0 40px}
   </div>
   <div class="facts" id="facts"></div>
   <div class="tabs" role="tablist">
-    <button class="tab" role="tab" id="tab-items" aria-selected="true">Faculty &amp; items</button>
+    <button class="tab" role="tab" id="tab-items" aria-selected="true">Publications</button>
     <button class="tab" role="tab" id="tab-ai" aria-selected="false">AI talent pool</button>
   </div>
 </div></header>
 
 <div class="controls"><div class="wrap">
-  <input type="search" id="q" placeholder="Search names or titles…" aria-label="Search">
+  <input type="search" id="q" list="names" placeholder="Search or pick a name…" aria-label="Search names or titles" autocomplete="off">
+  <datalist id="names"></datalist>
   <select id="school" aria-label="School"></select>
   <select id="dept" aria-label="Department"></select>
   <select id="type" aria-label="Item type"></select>
@@ -121,7 +122,7 @@ footer{color:var(--ink-3);font-size:12.5px} footer .wrap{padding-block:0 40px}
 
 <main><div class="wrap">
   <div class="count"><span id="count"></span>
-    <span class="legend"><span><span class="chk rev">✓</span> checked by a reviewer</span><span><span class="chk ok">●</span> confirmed by a source</span><span><span class="chk no">?</span> needs checking</span></span></div>
+    <span class="legend"><span><span class="chk rev">✓</span> verified</span><span><span class="chk ok"></span> not verified yet</span><span><span class="chk no">?</span> may belong to someone else</span></span></div>
   <div id="list"></div>
   <div class="pager" id="pager"></div>
   <details class="help">
@@ -174,7 +175,9 @@ function editLink(i, f){
   return `<a class="edit" target="_blank" rel="noopener" href="https://github.com/${r}/issues/new?labels=correction&title=${encodeURIComponent("Correction: "+i.id)}&body=${encodeURIComponent(body)}">Edit</a>`;
 }
 function itemRow(i, f){
-  const chk = i.rev ? `<span class="chk rev" title="Checked by a reviewer">✓</span>` : i.ok ? `<span class="chk ok" title="${esc(i.conf)}">●</span>` : `<span class="chk no" title="${esc(i.conf)}">?</span>`;
+  const chk = i.rev ? `<span class="chk rev" title="Verified">✓</span>`
+    : i.ok ? `<span class="chk ok" title="Not verified yet. Found via: ${esc(i.conf)}"></span>`
+    : `<span class="chk no" title="${esc(i.conf)}">?</span>`;
   const extra = [i.venue, i.role && `Role: ${i.role}`, i.amount && `$${fmt(i.amount)}`].filter(Boolean).join(" · ");
   return `<tr class="${i.ok?"":"tocheck"}"><td class="y">${esc(i.year)}</td><td class="ty">${esc(i.type)}</td>
     <td>${i.url?`<a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.title)}</a>`:esc(i.title)}${extra?`<span class="sub">${esc(extra)}</span>`:""}</td>
@@ -233,13 +236,16 @@ function init(data){
   opts("#school","All schools",data.schools);
   const depts=()=>[...new Set(F.filter(f=>!st.school||f.school===st.school).map(f=>f.department))].sort();
   opts("#dept","All departments",depts());
+  const names=()=>{ $("#names").innerHTML = F.filter(f=>(!st.school||f.school===st.school)&&(!st.dept||f.department===st.dept))
+      .map(f=>f.name).sort((a,b)=>a.split(" ").pop().localeCompare(b.split(" ").pop())).map(n=>`<option value="${esc(n)}"></option>`).join(""); };
+  names();
   opts("#type","All types",data.types.filter(t=>I.some(i=>i.type===t)));
   opts("#source","All sources",[...new Set(I.flatMap(i=>i.src))].sort());
   const r=repo(); $("#up").href = r?`https://github.com/${r}/upload/main/inbox`:"#"; if(!r) $("#up").hidden=true;
   $("#foot").textContent=`Sources: City Tech directories, OpenAlex (CC0), CUNY Academic Works, ORCID, NSF, NIH and uploaded workbooks. Generated ${data.generated}.`;
   $("#q").oninput=e=>{st.q=e.target.value.trim(); st.page=0; render();};
-  $("#school").onchange=e=>{st.school=e.target.value; st.dept=""; opts("#dept","All departments",depts()); st.page=0; render();};
-  $("#dept").onchange=e=>{st.dept=e.target.value; st.page=0; render();};
+  $("#school").onchange=e=>{st.school=e.target.value; st.dept=""; opts("#dept","All departments",depts()); names(); st.page=0; render();};
+  $("#dept").onchange=e=>{st.dept=e.target.value; names(); st.page=0; render();};
   $("#type").onchange=e=>{st.type=e.target.value; st.page=0; render();};
   $("#source").onchange=e=>{st.source=e.target.value; st.page=0; render();};
   $("#aionly").onchange=e=>{st.ai=e.target.checked; st.page=0; render();};
